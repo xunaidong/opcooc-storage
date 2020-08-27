@@ -1,1 +1,1 @@
-# opcooc-storage
+# opcooc-storage simple object storage

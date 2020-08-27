@@ -1,0 +1,12 @@
+dependencies {
+    api project(":opcooc-storage")
+    implementation platform("org.springframework.boot:spring-boot-dependencies:2.3.3.RELEASE")
+
+    api 'org.springframework.boot:spring-boot-autoconfigure:2.3.3.RELEASE'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-autoconfigure-processor:2.3.3.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure-processor:2.3.3.RELEASE'
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.3.3.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor:2.3.3.RELEASE'
+}

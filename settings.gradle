@@ -1,0 +1,5 @@
+rootProject.name = 'opcooc-storage'
+include 'opcooc-storage-core'
+include 'opcooc-storage-boot-starter'
+include 'opcooc-storage'
+
