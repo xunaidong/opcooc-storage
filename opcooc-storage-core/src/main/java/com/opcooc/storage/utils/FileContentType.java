@@ -16,6 +16,8 @@
  */
 package com.opcooc.storage.utils;
 
+import cn.hutool.core.util.StrUtil;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -168,7 +170,7 @@ public class FileContentType {
      * @return contentType
      */
     public static String getContentType(String name) {
-        String type = StrUtil.subAfter(name, StorageConstant.POINT);
+        String type = StrUtil.subAfter(name, StorageConstant.POINT, true);
         return FILE_TYPE.getOrDefault(type, STREAM_CONTENT_TYPE);
     }
 

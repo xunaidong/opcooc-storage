@@ -26,8 +26,8 @@ import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.FileBasicInfo;
 import com.opcooc.storage.config.FileInfoProcess;
 import com.opcooc.storage.utils.IoUtils;
+import com.opcooc.storage.utils.StorageUtil;
 import com.opcooc.storage.utils.StorageChecker;
-import com.opcooc.storage.utils.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -97,7 +97,7 @@ public abstract class AbstractS3Client implements FileClient {
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(0);
         PutObjectRequest putObjectRequest =
-                new PutObjectRequest(bucketName, StrUtil.checkFolder(path), new ByteArrayInputStream(new byte[]{}), metadata);
+                new PutObjectRequest(bucketName, StorageUtil.checkFolder(path), new ByteArrayInputStream(new byte[]{}), metadata);
         try {
             client.putObject(putObjectRequest);
             log.debug("create folder [{}] path success", path);

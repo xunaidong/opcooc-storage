@@ -16,32 +16,13 @@
  */
 package com.opcooc.storage.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  *
  *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
-public class StrUtil {
-
-    public static String subAfter(String string, String separator) {
-        if (StringUtils.isEmpty(string)) {
-            return string;
-        }
-        if (separator == null) {
-            return StorageConstant.EMPTY;
-        }
-        final String str = string;
-        final String sep = separator;
-        final int pos = str.lastIndexOf(sep);
-        if (StorageConstant.INDEX_NOT_FOUND == pos || (string.length() - 1) == pos) {
-            return StorageConstant.EMPTY;
-        }
-        return str.substring(pos + separator.length());
-    }
-
+public class StorageUtil {
 
     public static String checkFolder(String path){
         if (null == path) {
