@@ -26,7 +26,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
-    apply plugin: 'signing'
+//    apply plugin: 'signing'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'com.github.hierynomus.license'
@@ -73,6 +73,7 @@ subprojects {
         mavenLocal()
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "http://192.168.1.194:8081/repository/maven-public/" }
         jcenter()
     }
 
@@ -80,7 +81,6 @@ subprojects {
         compileOnly 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-        implementation 'com.google.guava:guava:28.2-jre'
         implementation "cn.hutool:hutool-core:5.2.1"
         implementation "org.apache.commons:commons-lang3:3.10"
 
@@ -123,20 +123,21 @@ subprojects {
     }
 
 
-    tasks.whenTaskAdded { task ->
-        if (task.name.contains('signMavenJavaPublication')) {
-            task.enabled = new File(project.secretKeyRingFile as String).isFile()
-        }
-    }
+//    tasks.whenTaskAdded { task ->
+//        if (task.name.contains('signMavenJavaPublication')) {
+//            task.enabled = new File(project.secretKeyRingFile as String).isFile()
+//        }
+//    }
 
     publishing {
 
         repositories {
             maven {
-                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+//                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+//                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
+                url = "http://192.168.1.194:8081/repository/maven-releases/"
                 credentials {
                     username project.sonatypeUsername
                     password project.sonatypePassword
@@ -183,7 +184,7 @@ subprojects {
         }
     }
 
-    signing {
-        sign publishing.publications.mavenJava
-    }
+//    signing {
+//        sign publishing.publications.mavenJava
+//    }
 }
