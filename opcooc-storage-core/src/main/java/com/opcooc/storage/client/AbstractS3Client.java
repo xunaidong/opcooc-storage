@@ -17,14 +17,15 @@
 package com.opcooc.storage.client;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Assert;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.opcooc.storage.config.ResultConverter;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.*;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.FileBasicInfo;
-import com.opcooc.storage.config.FileInfoProcess;
 import com.opcooc.storage.utils.IoUtils;
 import com.opcooc.storage.utils.StorageUtil;
 import com.opcooc.storage.utils.StorageChecker;
@@ -42,8 +43,6 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -65,11 +64,6 @@ public abstract class AbstractS3Client implements FileClient {
      */
     protected final ClientSource source;
 
-    /**
-     * 文件信息处理器
-     */
-    protected FileInfoProcess process;
-
     public AbstractS3Client(StorageProperty config, ClientSource source) {
         this.config = config;
         this.source = source;
@@ -77,11 +71,6 @@ public abstract class AbstractS3Client implements FileClient {
         StorageChecker.checkConfig(config, source);
         // 初始化client
         this.client = init(config);
-    }
-
-    @Override
-    public void initPostProcess(FileInfoProcess process) {
-        this.process = process;
     }
 
     /**
@@ -169,7 +158,7 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
-    public FileBasicInfo putObject(String bucketName, String objectName, InputStream stream) {
+    public FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream) {
         try {
             client.putObject(bucketName, objectName, stream, null);
             return getObjectMetadata(bucketName, objectName);
@@ -209,32 +198,33 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public List<FileBasicInfo> listObjects(String bucketName, String prefix, boolean recursive) {
+        return listConvertObjects(bucketName, prefix, recursive, info -> info);
+    }
+
+    @Override
+    public <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter) {
+        Assert.notNull(resultConverter, "'resultConverter' cannot be null");
+        return listConvertObjects(bucketName, prefix, recursive, resultConverter);
+    }
+
+    private <T> List<T> listConvertObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter) {
         ListObjectsV2Request req = new ListObjectsV2Request()
                 .withBucketName(bucketName)
                 .withPrefix(prefix)
                 .withMaxKeys(1000);
+
         ListObjectsV2Result result;
-        List<FileBasicInfo> objectList = new ArrayList<>();
+        List<T> objectList = new ArrayList<>();
         do {
             result = client.listObjectsV2(req);
 
             for (S3ObjectSummary object : result.getObjectSummaries()) {
-                String a = null;
-//                FileBasicInfo info = new FileBasicInfo();
-//                if (object.) {
-//                    info.setParentPath(object.objectName());
-//                } else {
-//                    String filename = StrUtil.subAfter(object.objectName(), "/");
-//                    info.setName(filename);
-//                    info.setSize(object.size());
-//                }
-//                info.setBucketName(bucketName);
-//                info.setLatestUpdateTime(object.lastModified());
-////                info.setMetadata(Map.copyOf(item.userMetadata()));
-//                if (process != null) {
-//                    info = process.process(info);
-//                }
-//                objectList.add(info);
+                FileBasicInfo info = new FileBasicInfo();
+                info.setKey(object.getKey());
+                info.setSize(object.getSize());
+                info.setBucketName(bucketName);
+                info.setLastModified(object.getLastModified());
+                objectList.add(resultConverter.convert(info));
             }
             // If there are more than maxKeys keys in the bucket, get a continuation token
             // and list the next objects.
@@ -248,29 +238,24 @@ public abstract class AbstractS3Client implements FileClient {
         FileBasicInfo info = new FileBasicInfo();
         try {
             ObjectMetadata object = client.getObjectMetadata(bucketName, objectName);
-//            //判断对象是否存在
-//            if (object == null) {
-//                throw new ObjectException("文件不存在!");
-//            }
-//            String filename = StrUtil.subAfter(object.name(), "/");
-//            if(StringUtils.isBlank(filename)){
-//                info.setName(object.name());
-//                info.setParentPath(null);
-//            }else{
-//                info.setName(filename);
-//                info.setParentPath(object.name().replaceFirst(filename, ""));
-//            }
-//            info.setBucketName(object.bucketName());
-//            info.setLatestUpdateTime(object.createdTime());
-//            info.setSize(object.length());
-//            info.setMetadata(Map.copyOf(object.httpHeaders()));
-//            if (process != null) {
-//                return process.process(info);
-//            }
+            if (object == null) {
+                throw new ObjectException("文件不存在!");
+            }
+            info.setKey(objectName);
+            info.setSize(object.getContentLength());
+            info.setBucketName(bucketName);
+            info.setLastModified(object.getLastModified());
             return info;
         } catch (Exception e) {
             throw new ObjectException(e.getMessage());
         }
+    }
+
+    @Override
+    public <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter) {
+        Assert.notNull(resultConverter, "'resultConverter' cannot be null");
+        FileBasicInfo info = getObjectMetadata(bucketName, objectName);
+        return resultConverter.convert(info);
     }
 
     @Override
@@ -287,7 +272,8 @@ public abstract class AbstractS3Client implements FileClient {
         }
     }
 
-    private boolean objectExist(String bucketName, String objectName) {
+    @Override
+    public boolean objectExist(String bucketName, String objectName) {
         try {
             return client.doesObjectExist(bucketName, objectName);
         } catch (Exception e) {

@@ -17,7 +17,7 @@ buildscript {
 
 allprojects {
     group = 'com.opcooc'
-    version = "0.0.1"
+    version = "1.0.0"
 }
 
 description = "opcooc-storage - 简化第三方对象存储操作"
@@ -73,7 +73,6 @@ subprojects {
         mavenLocal()
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "http://192.168.1.194:8081/repository/maven-public/" }
         jcenter()
     }
 
