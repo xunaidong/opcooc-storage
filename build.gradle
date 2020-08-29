@@ -26,7 +26,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'idea'
-//    apply plugin: 'signing'
+    apply plugin: 'signing'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'com.github.hierynomus.license'
@@ -131,21 +131,20 @@ subprojects {
     }
 
 
-//    tasks.whenTaskAdded { task ->
-//        if (task.name.contains('signMavenJavaPublication')) {
-//            task.enabled = new File(project.secretKeyRingFile as String).isFile()
-//        }
-//    }
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains('signMavenJavaPublication')) {
+            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
+        }
+    }
 
     publishing {
 
         repositories {
             maven {
-//                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-//                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-//                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
-                url = "http://192.168.1.194:8081/repository/maven-releases/"
                 credentials {
                     username project.sonatypeUsername
                     password project.sonatypePassword
@@ -163,7 +162,7 @@ subprojects {
                 pom {
                     name = "opcooc-storage"
                     packaging 'jar'
-                    description = 'opcooc-storage simple object storage'
+                    description = 'opcooc-storage simple object storage client'
                     url = 'https://github.com/opcooc/opcooc-storage'
 
                     licenses {
@@ -183,8 +182,8 @@ subprojects {
 
                     scm {
                         url = 'https://github.com/opcooc/opcooc-storage'
-                        connection = 'scm:git://github.com/opcooc/opcooc-storage.git'
-                        developerConnection = 'scm:git:ssh://git@github.com:opcooc/opcooc-storage.git'
+                        connection = 'scm:git:https://github.com/opcooc/opcooc-storage'
+                        developerConnection = 'scm:git:git@github.com:opcooc/opcooc-storage.git'
                     }
 
                 }
@@ -192,7 +191,7 @@ subprojects {
         }
     }
 
-//    signing {
-//        sign publishing.publications.mavenJava
-//    }
+    signing {
+        sign publishing.publications.mavenJava
+    }
 }
