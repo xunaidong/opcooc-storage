@@ -1,1 +1,1 @@
-# opcooc-storage simple object storage
+# opcooc-storage simple object storage client
