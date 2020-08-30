@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/opcooc/opcooc-storage">
-   <img alt="opcooc-storage-logo" src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/opcooc-storage.png">
+   <img alt="opcooc-storage-logo" src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/opcooc-storage.png">
   </a>
 </p>
 
@@ -21,8 +21,8 @@
 	<a target="_blank" href="https://github.com/opcooc/opcooc-storage/wiki" title="参考文档">
 		<img alt='Docs' src="https://img.shields.io/badge/Docs-latest-blueviolet.svg" />
 	</a>
-	<a target="_blank" href='https://gitee.com/shenqicheng100/opcooc-storage/stargazers'>
-	  <img alt='gitee star' src='https://gitee.com/shenqicheng100/opcooc-storage/badge/star.svg?theme=white'/>
+	<a target="_blank" href='https://gitee.com/opcooc/opcooc-storage/stargazers'>
+	  <img alt='gitee star' src='https://gitee.com/opcooc/opcooc-storage/badge/star.svg?theme=white'/>
 	</a>
 	<a target="_blank" href='https://github.com/opcooc/opcooc-storage'>
 		<img alt="github star" src="https://img.shields.io/github/stars/opcooc/opcooc-storage?style=social"/>
@@ -36,11 +36,11 @@
 <div style="text-align: center;">
     <table>
         <tr>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aws-s3.png" width="36" alt="aws-s3"/></td>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/tencent-cos.png" width="70" alt="tencent-cos"/></td>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/minio.png" width="70" alt="minio"/></td>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aliyun-oss.png" width="70" alt="aliyun-oss"/></td>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/qiliu.png" width="70" alt="qiliu"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/aws-s3.png" width="36" alt="aws-s3"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/tencent-cos.png" width="70" alt="tencent-cos"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/minio.png" width="70" alt="minio"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/aliyun-oss.png" width="70" alt="aliyun-oss"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/opcooc/opcooc-storage/raw/master/doc/img/qiliu.png" width="70" alt="qiliu"/></td>
         </tr>
     </table>
 </div>
