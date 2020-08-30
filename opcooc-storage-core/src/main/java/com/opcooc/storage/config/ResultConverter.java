@@ -17,19 +17,19 @@
 package com.opcooc.storage.config;
 
 /**
- *
+ * 文件信息转换器
  *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
 @FunctionalInterface
-public interface FileInfoProcess {
+public interface ResultConverter<T> {
 
     /**
      * 对文件信息进行处理 .
-     * @param info 文件信息.
+     * @param info 基础文件信息.
      * @return 处理后的信息.
      */
-    FileBasicInfo process(FileBasicInfo info);
+    T convert(FileBasicInfo info);
 
 }

@@ -16,11 +16,13 @@
  */
 package com.opcooc.storage.config;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,9 +32,7 @@ import java.util.Map;
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
-@Getter
-@Setter
-@ToString
+@Data
 public class FileBasicInfo {
 
     /**
@@ -43,31 +43,16 @@ public class FileBasicInfo {
     /**
      * 最后修改时间
      */
-    private ZonedDateTime latestUpdateTime;
+    private Date lastModified;
 
     /**
-     * 上级路径
+     * 对象存储路径
      */
-    private String parentPath;
-
-    /**
-     * 文件名称 ({文件名称}.{文件类型})
-     */
-    private String name;
+    private String key;
 
     /**
      * 文件大小
      */
     private Long size;
-
-    /**
-     * 是否为文件夹
-     */
-    private boolean isDir;
-
-    /**
-     * 对象元数据
-     */
-    private Map<String, Object> metadata = new HashMap<>();
 
 }

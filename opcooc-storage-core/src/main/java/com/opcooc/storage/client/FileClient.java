@@ -17,7 +17,7 @@
 package com.opcooc.storage.client;
 
 import com.opcooc.storage.config.FileBasicInfo;
-import com.opcooc.storage.config.FileInfoProcess;
+import com.opcooc.storage.config.ResultConverter;
 
 import java.io.File;
 import java.io.InputStream;
@@ -32,16 +32,6 @@ import java.util.Map;
  * @since 2020-08-22 10:30
  */
 public interface FileClient {
-    //--------------------------------------init start--------------------------------------
-
-    /**
-     * 初始化文件信息处理器
-     *
-     * @param process process
-     */
-    void initPostProcess(FileInfoProcess process);
-
-    //--------------------------------------init end--------------------------------------
 
     //--------------------------------------shutdown start--------------------------------------
 
@@ -123,7 +113,7 @@ public interface FileClient {
      * @param stream     文件流
      * @return 文件上传后的信息
      */
-    FileBasicInfo putObject(String bucketName, String objectName, InputStream stream);
+    FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream);
 
     /**
      * 上传文件到服务器
@@ -132,8 +122,8 @@ public interface FileClient {
      * @param stream     文件流
      * @return 文件上传后的信息
      */
-    default FileBasicInfo putObject(String objectName, InputStream stream) {
-        return putObject(getBucketName(), objectName, stream);
+    default FileBasicInfo uploadObject(String objectName, InputStream stream) {
+        return uploadObject(getBucketName(), objectName, stream);
     }
 
     /**
@@ -238,6 +228,29 @@ public interface FileClient {
     }
 
     /**
+     * 获取指定存储桶名称 指定前缀 的下级所有文件
+     *
+     * @param bucketName 存储桶名称
+     * @param prefix     指定前缀
+     * @param recursive  是否递归
+     * @param resultConverter  文件信息转换器
+     * @return 文件信息集合
+     */
+    <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter);
+
+    /**
+     * 获取指定存储桶名称 指定前缀 的下级所有文件
+     *
+     * @param prefix    指定前缀
+     * @param recursive 是否递归
+     * @param resultConverter  文件信息转换器
+     * @return 文件信息集合
+     */
+    default <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
+        return listObjects(getBucketName(), prefix, recursive, resultConverter);
+    }
+
+    /**
      * 获取对象元数据
      *
      * @param bucketName 储桶名称
@@ -256,6 +269,45 @@ public interface FileClient {
         return getObjectMetadata(getBucketName(), objectName);
     }
 
+    /**
+     * 获取对象元数据
+     *
+     * @param bucketName 储桶名称
+     * @param objectName 文件完整路径
+     * @param resultConverter  文件信息转换器
+     * @return 文件信息
+     */
+    <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter);
+
+    /**
+     * 获取对象元数据
+     *
+     * @param objectName 文件完整路径
+     * @param resultConverter  文件信息转换器
+     * @return 文件信息
+     */
+    default <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {
+        return getObjectMetadata(getBucketName(), objectName, resultConverter);
+    }
+
+    /**
+     * 判断对象是否存在
+     *
+     * @param bucketName 储桶名称
+     * @param objectName 文件完整路径
+     * @return 结果
+     */
+    boolean objectExist(String bucketName, String objectName);
+
+    /**
+     * 判断对象是否存在
+     *
+     * @param objectName 文件完整路径
+     * @return 结果
+     */
+    default boolean objectExist(String objectName) {
+        return objectExist(getBucketName(), objectName);
+    }
     //--------------------------------------get file Metadata end--------------------------------------
 
     //--------------------------------------get file object start--------------------------------------

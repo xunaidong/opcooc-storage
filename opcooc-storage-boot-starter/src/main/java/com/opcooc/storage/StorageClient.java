@@ -16,13 +16,13 @@
  */
 package com.opcooc.storage;
 
+import cn.hutool.core.util.StrUtil;
 import com.opcooc.storage.client.FileClient;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.exception.ClientException;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -72,7 +72,7 @@ public class StorageClient implements InitializingBean, DisposableBean {
     }
 
     public synchronized void removeClient(String source) {
-        if (StringUtils.isBlank(source)) {
+        if (StrUtil.isBlank(source)) {
             throw new ClientException("remove parameter could not be empty");
         }
         if (defaultClient.equals(source)) {
@@ -93,7 +93,7 @@ public class StorageClient implements InitializingBean, DisposableBean {
 
     public FileClient getClient(String source) {
 
-        if (StringUtils.isBlank(source)) {
+        if (StrUtil.isBlank(source)) {
             return getDefaultClient();
         }
 
