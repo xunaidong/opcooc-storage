@@ -37,7 +37,7 @@
     <table>
         <tr>
             <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aws-s3.png" width="60" alt="aws-s3"/></td>
-            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/tencent-cos.jpg" width="60" alt="tencent-cos"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/tencent-cos.png" width="60" alt="tencent-cos"/></td>
             <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/minio.png" width="60" alt="minio"/></td>
             <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aliyun-oss.png" width="60" alt="aliyun-oss"/></td>
             <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/qiliu.png" width="60" alt="qiliu"/></td>
