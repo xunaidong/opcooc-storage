@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Just to simplify file storage</strong>
+  <strong>只是为了简化文件存储</strong>
 </p>
 
 <p align="center">
@@ -47,19 +47,19 @@
 
 -------------------------------------------------------------------------------
 
-- QQ exchange group `789585778`，You can obtain detailed graphic documents and questions and answers for each project 
+- QQ交流群 `789585778`，可获取各项目详细图文文档、疑问解答
 [![](http://pub.idqqimg.com/wpa/images/group.png)]()
 
-## What is opcooc-storage?
+## 什么是 opcooc-storage?
 
-opcooc-storage encapsulates and expands aws s3
+opcooc-storage 将 AWS S3 协议进行了封装和扩展
 
 [![CN doc](https://img.shields.io/badge/文档-中文版-blue.svg)](README_zh_CN.md)
 [![EN doc](https://img.shields.io/badge/document-English-blue.svg)](README.md)
 
-## Getting started
+## 快速开始
 
--   Add opcooc-storage dependency
+-   引用依赖
     -   Maven:
         ```xml
             <dependency>
@@ -73,7 +73,7 @@ opcooc-storage encapsulates and expands aws s3
         compile group: 'com.opcooc', name: 'opcooc-storage-boot-starter', version: '1.0.0'
         ```
 
-- Add config , add config  information in `application.yml`
+-   添加配置，在 `application.yml` 中添加配置配置信息
 
     ```yaml
         opcooc:
@@ -92,7 +92,7 @@ opcooc-storage encapsulates and expands aws s3
               secret-key: xxx
     ```
 
--   Use it
+-   然后就开始玩耍吧~
     ```java
         @RestController
         @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -110,7 +110,7 @@ opcooc-storage encapsulates and expands aws s3
         }
     ```
 
-> This showcase is just a small part of opcooc-storage features. If you want to learn more, please refer to the [documentation](http://storage.opcooc.com).
+> 该展示只是 opcooc-storage 功能的一小部分。如果您想了解更多信息，请参阅 [documentation](http://storage.opcooc.com).
 
 ## License
 
