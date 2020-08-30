@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/opcooc/opcooc-storage">
-   <img alt="opcooc-storage-logo" src="https://github.com/opcooc/opcooc-storage/blob/master/doc/img/uugai.com-1598772833202.png">
+   <img alt="opcooc-storage-logo" src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/opcooc-storage.png">
   </a>
 </p>
 
@@ -36,11 +36,11 @@
 <div style="text-align: center;">
     <table>
         <tr>
-            <td align="center" width="200"><img src="" width="20"> s3</td>
-            <td align="center" width="200"><img src="" width="20"> cos</td>
-            <td align="center" width="200"><img src="" width="20"> minio</td>
-            <td align="center" width="200"><img src="" width="20"> oss</td>
-            <td align="center" width="200"><img src="" width="20"> qinlu</td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aws-s3.png" width="60" alt="aws-s3"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/tencent-cos.jpg" width="60" alt="tencent-cos"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/minio.png" width="60" alt="minio"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/aliyun-oss.png" width="60" alt="aliyun-oss"/></td>
+            <td align="center" width="200"><img src="https://gitee.com/shenqicheng100/opcooc-storage/raw/master/doc/img/qiliu.png" width="60" alt="qiliu"/></td>
         </tr>
     </table>
 </div>
