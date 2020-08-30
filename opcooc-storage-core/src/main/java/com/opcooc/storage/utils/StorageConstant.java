@@ -30,6 +30,8 @@ public class StorageConstant {
 
     public static final int INDEX_NOT_FOUND = -1;
 
+    private static final String STORAGE_PREFIX = "#";
+
     public static final String NO_SOURCE = "source cannot be null";
 
     public static final String NO_CLIENT = "client get null";
