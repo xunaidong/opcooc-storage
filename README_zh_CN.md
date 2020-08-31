@@ -48,7 +48,7 @@
 -------------------------------------------------------------------------------
 
 - QQ交流群 `789585778`，可获取各项目详细图文文档、疑问解答
-[![](http://pub.idqqimg.com/wpa/images/group.png)]()
+[![](http://pub.idqqimg.com/wpa/images/group.png)](https://jq.qq.com/?_wv=1027&k=iRannIfW)
 
 ## 什么是 opcooc-storage?
 
