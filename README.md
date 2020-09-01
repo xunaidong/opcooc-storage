@@ -48,7 +48,7 @@
 -------------------------------------------------------------------------------
 
 - QQ exchange group `789585778`，You can obtain detailed graphic documents and questions and answers for each project 
-[![](http://pub.idqqimg.com/wpa/images/group.png)]()
+[![](http://pub.idqqimg.com/wpa/images/group.png)](https://jq.qq.com/?_wv=1027&k=iRannIfW)
 
 ## What is opcooc-storage?
 
