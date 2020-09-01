@@ -20,6 +20,10 @@ package com.opcooc.storage.autoconfigure;
 import com.opcooc.storage.StorageClient;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
+import com.opcooc.storage.processor.StorageHeaderProcessor;
+import com.opcooc.storage.processor.StorageProcessorManager;
+import com.opcooc.storage.processor.StorageSessionProcessor;
+import com.opcooc.storage.processor.StorageSpelExpressionProcessor;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import com.opcooc.storage.provider.YmlClientSourceProvider;
 import lombok.AllArgsConstructor;
@@ -30,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -64,5 +69,14 @@ public class FileClientAutoConfiguration {
         return clientSource;
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageProcessorManager storageProcessorManager() {
+        StorageProcessorManager manager = new StorageProcessorManager();
+        manager.addProcessor(new StorageHeaderProcessor());
+        manager.addProcessor(new StorageSessionProcessor());
+        manager.addProcessor(new StorageSpelExpressionProcessor());
+        return manager;
+    }
 
 }

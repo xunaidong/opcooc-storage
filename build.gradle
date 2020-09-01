@@ -83,7 +83,7 @@ subprojects {
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 
         implementation 'org.springframework.boot:spring-boot-starter-aop:2.3.3.RELEASE'
-
+        implementation 'org.springframework.boot:spring-boot-starter-web:2.3.3.RELEASE'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
         implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.11.2'
 
