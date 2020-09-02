@@ -100,19 +100,20 @@ public abstract class AbstractS3Client implements FileClient {
     @Override
     public String getBucketName() {
         String bucket = StorageAttributeContextHolder.bucket();
-        return StrUtil.isBlank(bucket) ? config.getBucketName() : bucket;
+        return createBucket(StrUtil.isBlank(bucket) ? config.getBucketName() : bucket);
     }
 
     @Override
-    public void createBucket(String bucketName) {
+    public String createBucket(String bucketName) {
         if (doesBucketExist(bucketName)) {
             log.debug("exists [{}] bucket name ", bucketName);
-            return;
+            return bucketName;
         }
 
         try {
-            client.createBucket(bucketName);
-            log.debug("create [{}] bucket name success", bucketName);
+            Bucket bucket = client.createBucket(bucketName);
+            log.debug("create [{}] bucket name success", bucket.getName());
+            return bucket.getName();
         } catch (Exception e) {
             throw new BucketException(e.getMessage());
         }

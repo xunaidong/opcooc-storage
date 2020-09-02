@@ -23,6 +23,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author shenqicheng
+ * @since 2020-09-02 13:01
+ */
 public class StorageSessionProcessor implements StorageProcessor {
     /**
      * session开头

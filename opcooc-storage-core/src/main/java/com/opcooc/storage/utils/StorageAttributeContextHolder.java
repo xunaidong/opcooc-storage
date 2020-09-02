@@ -24,6 +24,8 @@ import java.util.Deque;
 
 /**
  * 核心基于ThreadLocal的切换存储配置工具类
+ * @author shenqicheng
+ * @since 2020-09-02 13:01
  */
 public final class StorageAttributeContextHolder {
 

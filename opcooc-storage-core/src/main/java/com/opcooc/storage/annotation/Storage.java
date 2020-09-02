@@ -36,11 +36,11 @@ public @interface Storage {
      * client name
      * @return The name of the client to be switch
      */
-    String client();
+    String client() default "";
 
     /**
      * bucket name
      * @return The name of the bucket to be switch
      */
-    String bucket();
+    String bucket() default "";
 }

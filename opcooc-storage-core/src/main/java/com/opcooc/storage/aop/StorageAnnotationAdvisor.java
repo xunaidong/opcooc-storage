@@ -27,6 +27,10 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 
+/**
+ * @author shenqicheng
+ * @since 2020-09-02 13:01
+ */
 public class StorageAnnotationAdvisor extends AbstractPointcutAdvisor implements
         BeanFactoryAware {
 
@@ -41,12 +45,12 @@ public class StorageAnnotationAdvisor extends AbstractPointcutAdvisor implements
 
     @Override
     public Pointcut getPointcut() {
-        return null;
+        return this.pointcut;
     }
 
     @Override
     public Advice getAdvice() {
-        return null;
+        return this.advice;
     }
 
     @Override

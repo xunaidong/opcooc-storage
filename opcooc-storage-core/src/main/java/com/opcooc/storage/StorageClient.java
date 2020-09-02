@@ -53,10 +53,6 @@ public class StorageClient implements InitializingBean, DisposableBean {
         return getClient(source);
     }
 
-    public FileClient op(ClientSource source) {
-        return op(source.name());
-    }
-
     public Map<String, FileClient> getCurrentClients() {
         return clientMap;
     }
