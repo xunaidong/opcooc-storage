@@ -24,7 +24,7 @@ public class StorageProcessorManager implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (processors.isEmpty()) {
+        if (processors == null || processors.isEmpty()) {
             throw new IllegalArgumentException("processor list not null");
         }
         processors.sort(Comparator.comparingInt(StorageProcessor::order));
