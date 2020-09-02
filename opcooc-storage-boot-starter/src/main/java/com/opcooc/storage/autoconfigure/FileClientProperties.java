@@ -22,13 +22,12 @@ import com.opcooc.storage.config.StorageProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.Ordered;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -58,6 +57,11 @@ public class FileClientProperties {
      * 自定义配置
      */
     private Map<String, ExtendRequestProperty> extend = new HashMap<>();
+
+    /**
+     * aop切面顺序，默认优先级最高
+     */
+    private Integer order = Ordered.HIGHEST_PRECEDENCE;
 
     @Getter
     @Setter

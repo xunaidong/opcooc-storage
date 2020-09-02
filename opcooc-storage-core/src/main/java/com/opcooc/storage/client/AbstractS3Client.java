@@ -18,6 +18,7 @@ package com.opcooc.storage.client;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
@@ -27,6 +28,7 @@ import com.opcooc.storage.exception.*;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.FileBasicInfo;
 import com.opcooc.storage.utils.IoUtils;
+import com.opcooc.storage.utils.StorageAttributeContextHolder;
 import com.opcooc.storage.utils.StorageUtil;
 import com.opcooc.storage.utils.StorageChecker;
 import lombok.extern.slf4j.Slf4j;
@@ -97,19 +99,21 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public String getBucketName() {
-        return config.getBucketName();
+        String bucket = StorageAttributeContextHolder.bucket();
+        return createBucket(StrUtil.isBlank(bucket) ? config.getBucketName() : bucket);
     }
 
     @Override
-    public void createBucket(String bucketName) {
+    public String createBucket(String bucketName) {
         if (doesBucketExist(bucketName)) {
             log.debug("exists [{}] bucket name ", bucketName);
-            return;
+            return bucketName;
         }
 
         try {
-            client.createBucket(bucketName);
-            log.debug("create [{}] bucket name success", bucketName);
+            Bucket bucket = client.createBucket(bucketName);
+            log.debug("create [{}] bucket name success", bucket.getName());
+            return bucket.getName();
         } catch (Exception e) {
             throw new BucketException(e.getMessage());
         }

@@ -76,8 +76,9 @@ public interface FileClient {
      * 创建存储桶
      *
      * @param bucketName 存储桶名称
+     * @return 存储桶名称
      */
-    void createBucket(String bucketName);
+    String createBucket(String bucketName);
 
     /**
      * 删除存储桶
@@ -234,6 +235,7 @@ public interface FileClient {
      * @param prefix     指定前缀
      * @param recursive  是否递归
      * @param resultConverter  文件信息转换器
+     * @param <T> 泛型
      * @return 文件信息集合
      */
     <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter);
@@ -244,6 +246,7 @@ public interface FileClient {
      * @param prefix    指定前缀
      * @param recursive 是否递归
      * @param resultConverter  文件信息转换器
+     * @param <T> 泛型
      * @return 文件信息集合
      */
     default <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
@@ -275,6 +278,7 @@ public interface FileClient {
      * @param bucketName 储桶名称
      * @param objectName 文件完整路径
      * @param resultConverter  文件信息转换器
+     * @param <T> 泛型
      * @return 文件信息
      */
     <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter);
@@ -284,6 +288,7 @@ public interface FileClient {
      *
      * @param objectName 文件完整路径
      * @param resultConverter  文件信息转换器
+     * @param <T> 泛型
      * @return 文件信息
      */
     default <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {

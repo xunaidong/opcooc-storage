@@ -14,30 +14,33 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.utils;
+package com.opcooc.storage.processor;
 
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+import com.opcooc.storage.utils.StorageUtil;
+import org.aopalliance.intercept.MethodInvocation;
 
 /**
- *
- *
  * @author shenqicheng
- * @since 2020-08-22 10:30
+ * @since 2020-09-02 13:01
  */
-public class StorageUtil {
+public class StorageHeaderProcessor implements StorageProcessor {
+    /**
+     * header prefix
+     */
+    private static final String HEADER_PREFIX = "#header";
 
-    public static String checkFolder(String path){
-        if (null == path) {
-            return "";
-        }
-        return path.endsWith("/") ? path : path + "/";
+    @Override
+    public boolean matches(String key) {
+        return key.startsWith(HEADER_PREFIX);
     }
 
-    public static HttpServletRequest getHttpServletRequest(){
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    @Override
+    public String doDetermineStorage(MethodInvocation invocation, String key) {
+        return StorageUtil.getHttpServletRequest().getHeader(key.substring(8));
     }
 
+    @Override
+    public Integer order() {
+        return 100;
+    }
 }

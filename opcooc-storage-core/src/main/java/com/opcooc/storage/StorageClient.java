@@ -21,6 +21,7 @@ import com.opcooc.storage.client.FileClient;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.exception.ClientException;
 import com.opcooc.storage.provider.ClientSourceProvider;
+import com.opcooc.storage.utils.StorageAttributeContextHolder;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -30,8 +31,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -47,15 +46,11 @@ public class StorageClient implements InitializingBean, DisposableBean {
 
 
     public FileClient op() {
-        return getDefaultClient();
+        return getClient(StorageAttributeContextHolder.client());
     }
 
     public FileClient op(String source) {
         return getClient(source);
-    }
-
-    public FileClient op(ClientSource source) {
-        return op(source.name());
     }
 
     public Map<String, FileClient> getCurrentClients() {
@@ -94,14 +89,15 @@ public class StorageClient implements InitializingBean, DisposableBean {
     public FileClient getClient(String source) {
 
         if (StrUtil.isBlank(source)) {
-            return getDefaultClient();
+            return getPrimaryClient();
         }
 
         if (clientMap.containsKey(source)) {
             log.debug("get the client named is [{}]", source);
             return clientMap.get(source);
         }
-        return getDefaultClient();
+
+        return getPrimaryClient();
     }
 
     @Override
@@ -129,7 +125,7 @@ public class StorageClient implements InitializingBean, DisposableBean {
         client.shutdown();
     }
 
-    private FileClient getDefaultClient() {
+    private FileClient getPrimaryClient() {
         log.debug("get default client the client named is [{}]", defaultClient);
         return clientMap.get(defaultClient);
     }

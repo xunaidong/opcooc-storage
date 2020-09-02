@@ -14,30 +14,24 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.utils;
+package com.opcooc.storage.support;
 
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- *
- *
  * @author shenqicheng
- * @since 2020-08-22 10:30
+ * @since 2020-09-02 13:01
  */
-public class StorageUtil {
+@Getter
+@Setter
+@Builder
+@ToString
+public class StorageAttribute {
 
-    public static String checkFolder(String path){
-        if (null == path) {
-            return "";
-        }
-        return path.endsWith("/") ? path : path + "/";
-    }
+    private String client;
 
-    public static HttpServletRequest getHttpServletRequest(){
-        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-    }
-
+    private String bucket;
 }

@@ -18,23 +18,30 @@ package com.opcooc.storage.autoconfigure;
 
 
 import com.opcooc.storage.StorageClient;
+import com.opcooc.storage.aop.StorageAnnotationAdvisor;
+import com.opcooc.storage.aop.StorageAnnotationInterceptor;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
+import com.opcooc.storage.processor.StorageHeaderProcessor;
+import com.opcooc.storage.processor.StorageProcessorManager;
+import com.opcooc.storage.processor.StorageSessionProcessor;
+import com.opcooc.storage.processor.StorageSpelExpressionProcessor;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import com.opcooc.storage.provider.YmlClientSourceProvider;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -64,5 +71,25 @@ public class FileClientAutoConfiguration {
         return clientSource;
     }
 
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageProcessorManager storageProcessorManager() {
+        StorageProcessorManager manager = new StorageProcessorManager();
+        manager.addProcessor(new StorageHeaderProcessor());
+        manager.addProcessor(new StorageSessionProcessor());
+        manager.addProcessor(new StorageSpelExpressionProcessor());
+        return manager;
+    }
+
+    @Role(value = BeanDefinition.ROLE_INFRASTRUCTURE)
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageAnnotationAdvisor dynamicDatasourceAnnotationAdvisor(StorageProcessorManager storageProcessorManager) {
+        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor();
+        interceptor.setProcessorManager(storageProcessorManager);
+        StorageAnnotationAdvisor advisor = new StorageAnnotationAdvisor(interceptor);
+        advisor.setOrder(properties.getOrder());
+        return advisor;
+    }
 
 }
