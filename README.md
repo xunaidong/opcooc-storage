@@ -65,7 +65,7 @@ opcooc-storage encapsulates and expands aws s3
             <dependency>
               <groupId>com.opcooc</groupId>
               <artifactId>opcooc-storage-boot-starter</artifactId>
-              <version>1.0.0</version>
+              <version>1.1.0</version>
             </dependency>
         ```
     -   Gradle
