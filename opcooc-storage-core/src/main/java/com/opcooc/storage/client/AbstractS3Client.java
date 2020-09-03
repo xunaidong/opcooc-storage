@@ -128,17 +128,12 @@ public abstract class AbstractS3Client implements FileClient {
                 log.debug("delete bucket name: [{}], object: [{}] success", bucketName, s3ObjectSummary.getKey());
             }
 
-            // If the bucket contains many objects, the listObjects() call
-            // might not return all of the objects in the first listing. Check to
-            // see whether the listing was truncated. If so, retrieve the next page of objects
-            // and delete them.
             if (objectListing.isTruncated()) {
                 objectListing = client.listNextBatchOfObjects(objectListing);
             } else {
                 break;
             }
         }
-        // After all objects and object versions are deleted, delete the bucket.
         client.deleteBucket(bucketName);
     }
 
