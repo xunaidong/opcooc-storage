@@ -24,6 +24,8 @@ package com.opcooc.storage.utils;
  */
 public class StorageConstant {
 
+    public static final String CONTENT_TYPE = "Content-Type";
+
     public static final String EMPTY = "";
 
     public static final String POINT = ".";

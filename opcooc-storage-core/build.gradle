@@ -1,3 +1,4 @@
 dependencies {
-    api 'com.amazonaws:aws-java-sdk-s3:1.11.848'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.848'
+    implementation 'org.apache.tika:tika-core:1.24.1'
 }

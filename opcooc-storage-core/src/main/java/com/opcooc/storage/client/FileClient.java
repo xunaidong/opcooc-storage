@@ -445,7 +445,7 @@ public interface FileClient {
      * @param expiration 过期时间
      * @return 签名url
      */
-    String getUrl(String bucketName, String objectName, Date expiration);
+    String getDownloadUrl(String bucketName, String objectName, Date expiration);
 
     /**
      * 生成签名的URL，以使用get的HTTP方法访问文件
@@ -454,8 +454,8 @@ public interface FileClient {
      * @param expiration 过期时间
      * @return 签名url
      */
-    default String getUrl(String objectName, Date expiration) {
-        return getUrl(getBucketName(), objectName, expiration);
+    default String getDownloadUrl(String objectName, Date expiration) {
+        return getDownloadUrl(getBucketName(), objectName, expiration);
     }
 
     /**
@@ -464,9 +464,9 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return 签名url
      */
-    default String getUrl(String objectName) {
+    default String getDownloadUrl(String objectName) {
         Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return getUrl(objectName, expiration);
+        return getDownloadUrl(objectName, expiration);
     }
 
     //--------------------------------------get download url start--------------------------------------
@@ -512,9 +512,10 @@ public interface FileClient {
      * @param bucketName 储桶名称
      * @param objectName 文件完整路径
      * @param expiration 过期时间
+     * @param specType 是否添加文件类型验证
      * @return 生成签名的URL
      */
-    String putUrl(String bucketName, String objectName, Date expiration);
+    String getUploadUrl(String bucketName, String objectName, Date expiration, boolean specType);
 
     /**
      * 生成签名的URL，以使用特put的HTTP方法访问
@@ -523,8 +524,8 @@ public interface FileClient {
      * @param expiration 过期时间
      * @return 生成签名的URL
      */
-    default String putUrl(String objectName, Date expiration) {
-        return putUrl(getBucketName(), objectName, expiration);
+    default String getUploadUrl(String objectName, Date expiration) {
+        return getUploadUrl(getBucketName(), objectName, expiration, false);
     }
 
     /**
@@ -533,9 +534,33 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return 生成签名的URL
      */
-    default String putUrl(String objectName) {
+    default String getUploadUrl(String objectName) {
         Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return putUrl(objectName, expiration);
+        return getUploadUrl(objectName, expiration);
+    }
+
+    /**
+     * 生成签名的URL，以使用特put的HTTP方法访问
+     *
+     * @param objectName 文件完整路径
+     * @param expiration 过期时间
+     * @param specType 是否添加文件类型验证
+     * @return 生成签名的URL
+     */
+    default String getUploadUrl(String objectName, Date expiration, boolean specType) {
+        return getUploadUrl(getBucketName(), objectName, expiration, specType);
+    }
+
+    /**
+     * 生成签名的URL，以使用特put的HTTP方法访问(默认为5分钟)
+     *
+     * @param objectName 文件完整路径
+     * @param specType 是否添加文件类型验证
+     * @return 生成签名的URL
+     */
+    default String getUploadUrl(String objectName, boolean specType) {
+        Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
+        return getUploadUrl(objectName, expiration, specType);
     }
     //--------------------------------------get upload signature url end--------------------------------------
 

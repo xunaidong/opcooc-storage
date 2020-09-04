@@ -16,6 +16,7 @@
  */
 package com.opcooc.storage.utils;
 
+import org.apache.tika.Tika;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,6 +29,8 @@ import javax.servlet.http.HttpServletRequest;
  * @since 2020-08-22 10:30
  */
 public class StorageUtil {
+
+    public static final Tika TIKA = new Tika();
 
     public static String checkFolder(String path){
         if (null == path) {

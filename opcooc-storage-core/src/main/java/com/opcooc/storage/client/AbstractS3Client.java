@@ -27,10 +27,7 @@ import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.*;
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.FileBasicInfo;
-import com.opcooc.storage.utils.IoUtils;
-import com.opcooc.storage.utils.StorageAttributeContextHolder;
-import com.opcooc.storage.utils.StorageUtil;
-import com.opcooc.storage.utils.StorageChecker;
+import com.opcooc.storage.utils.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -159,7 +156,9 @@ public abstract class AbstractS3Client implements FileClient {
     @Override
     public FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream) {
         try {
-            client.putObject(bucketName, objectName, stream, null);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(StorageUtil.TIKA.detect(stream));
+            client.putObject(bucketName, objectName, stream, metadata);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
             throw new UploadException(e.getMessage());
@@ -342,14 +341,9 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
-    public String getUrl(String bucketName, String objectName, Date expiration) {
+    public String getDownloadUrl(String bucketName, String objectName, Date expiration) {
         try {
-            GeneratePresignedUrlRequest generatePresignedUrlRequest =
-                    new GeneratePresignedUrlRequest(bucketName, objectName)
-                            .withMethod(HttpMethod.GET)
-                            .withExpiration(expiration);
-
-            URL url = client.generatePresignedUrl(generatePresignedUrlRequest);
+            URL url = client.generatePresignedUrl(bucketName, objectName, expiration);
             return url.toExternalForm();
         } catch (Exception e) {
             throw new PresignedException(e.getMessage());
@@ -358,17 +352,23 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public Map<String, String> postUrl(String bucketName, String objectName, Date expiration) {
-        return null;
+        throw new PresignedException("method not implement!");
     }
 
     @Override
-    public String putUrl(String bucketName, String objectName, Date expiration) {
+    public String getUploadUrl(String bucketName, String objectName, Date expiration, boolean specType) {
         try {
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, objectName)
                             .withMethod(HttpMethod.PUT)
                             .withExpiration(expiration);
-
+            if (specType) {
+                //强制前端需要在的上传方法添加对应的 Request Header( key: Content-Type, value: {fileType} )
+                //不开启需要前端自行添加没有强制要求
+                //用于解决文件上传到文件服务器之后没有对应的文件类型问题
+                String fileType = StorageUtil.TIKA.detect(objectName);
+                generatePresignedUrlRequest.putCustomRequestHeader(StorageConstant.CONTENT_TYPE, fileType);
+            }
             URL url = client.generatePresignedUrl(generatePresignedUrlRequest);
             return url.toExternalForm();
         } catch (Exception e) {
