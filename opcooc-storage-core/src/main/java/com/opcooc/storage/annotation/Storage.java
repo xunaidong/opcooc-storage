@@ -16,6 +16,9 @@
  */
 package com.opcooc.storage.annotation;
 
+import com.opcooc.storage.processor.AutoStorageProcessor;
+import com.opcooc.storage.processor.StorageProcessor;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -43,4 +46,12 @@ public @interface Storage {
      * @return The name of the bucket to be switch
      */
     String bucket() default "";
+
+    /**
+     * processor todo 是否需要分开配置
+     * @return StorageProcessor
+     */
+    Class<? extends StorageProcessor> processor() default AutoStorageProcessor.class;
+
+
 }

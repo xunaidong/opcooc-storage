@@ -18,7 +18,6 @@ package com.opcooc.storage;
 
 import cn.hutool.core.util.StrUtil;
 import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.exception.ClientException;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import com.opcooc.storage.utils.StorageAttributeContextHolder;
@@ -40,7 +39,7 @@ public class StorageClient implements InitializingBean, DisposableBean {
     private final Map<String, FileClient> clientMap = new LinkedHashMap<>();
 
     @Setter
-    private String defaultClient = "MINIO";
+    private String primary = "";
     @Setter
     private ClientSourceProvider clientProvider;
 
@@ -70,7 +69,7 @@ public class StorageClient implements InitializingBean, DisposableBean {
         if (StrUtil.isBlank(source)) {
             throw new ClientException("remove parameter could not be empty");
         }
-        if (defaultClient.equals(source)) {
+        if (primary.equals(source)) {
             throw new ClientException("could not be remove default client");
         }
         if (clientMap.containsKey(source)) {
@@ -126,8 +125,14 @@ public class StorageClient implements InitializingBean, DisposableBean {
     }
 
     private FileClient getPrimaryClient() {
-        log.debug("get default client the client named is [{}]", defaultClient);
-        return clientMap.get(defaultClient);
+        log.debug("get default client the client named is [{}]", primary);
+
+        FileClient client = clientMap.get(primary);
+
+        if (client == null) {
+            throw new ClientException("no primary client !");
+        }
+        return client;
     }
 
 

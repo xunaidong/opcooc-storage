@@ -20,7 +20,6 @@ package com.opcooc.storage.autoconfigure;
 import com.opcooc.storage.StorageClient;
 import com.opcooc.storage.aop.StorageAnnotationAdvisor;
 import com.opcooc.storage.aop.StorageAnnotationInterceptor;
-import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.processor.StorageHeaderProcessor;
 import com.opcooc.storage.processor.StorageProcessorManager;
@@ -38,7 +37,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -57,7 +55,7 @@ public class FileClientAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public ClientSourceProvider clientSourceProvider() {
-        Map<ClientSource, StorageProperty> clientSourceMap = properties.getClientSource();
+        Map<String, StorageProperty> clientSourceMap = properties.getClient();
         Map<String, FileClientProperties.ExtendRequestProperty> extendClientSourceMap = properties.getExtend();
         return new YmlClientSourceProvider(clientSourceMap, extendClientSourceMap);
     }
@@ -66,7 +64,7 @@ public class FileClientAutoConfiguration {
     @ConditionalOnMissingBean
     public StorageClient storageRoutingClientSource(ClientSourceProvider clientSourceProvider) {
         StorageClient clientSource = new StorageClient();
-        clientSource.setDefaultClient(properties.getDefaultClient());
+        clientSource.setPrimary(properties.getPrimary());
         clientSource.setClientProvider(clientSourceProvider);
         return clientSource;
     }

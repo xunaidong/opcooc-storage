@@ -14,27 +14,28 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.support;
+package com.opcooc.storage.processor;
 
-import com.opcooc.storage.processor.StorageProcessor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-@Getter
-@Setter
-@Builder
-@ToString
-public class StorageAttribute {
+public class AutoStorageProcessor implements StorageProcessor{
 
-    private String client;
+    @Override
+    public boolean matches(String key) {
+        return false;
+    }
 
-    private String bucket;
+    @Override
+    public String doDetermineStorage(MethodInvocation invocation, String key) {
+        return null;
+    }
 
-    private Class<? extends StorageProcessor> processor;
+    @Override
+    public Integer order() {
+        return Integer.MAX_VALUE;
+    }
 }

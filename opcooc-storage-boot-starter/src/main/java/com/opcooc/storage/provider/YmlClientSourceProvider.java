@@ -36,7 +36,7 @@ public class YmlClientSourceProvider extends AbstractClientSourceProvider {
     /**
      * 所有 client
      */
-    private final Map<ClientSource, StorageProperty> storagePropertiesMap;
+    private final Map<String, StorageProperty> storagePropertiesMap;
 
     private final Map<String, FileClientProperties.ExtendRequestProperty> extendStoragePropertiesMap;
 

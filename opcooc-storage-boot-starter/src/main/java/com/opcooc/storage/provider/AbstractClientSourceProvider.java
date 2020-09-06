@@ -26,21 +26,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
 public abstract class AbstractClientSourceProvider implements ClientSourceProvider {
 
 
-    protected Map<String, FileClient> createClientMap(Map<ClientSource, StorageProperty> clientSourceMap) {
+    protected Map<String, FileClient> createClientMap(Map<String, StorageProperty> clientSourceMap) {
 
         Map<String, FileClient> map = new HashMap<>(clientSourceMap.size());
-        for (Map.Entry<ClientSource, StorageProperty> item : clientSourceMap.entrySet()) {
-            String key = item.getKey().name();
-            FileClient client = FileClientCreator.getClient(item.getKey(), item.getValue());
-            map.put(key, client);
+        for (Map.Entry<String, StorageProperty> item : clientSourceMap.entrySet()) {
+            String key = item.getKey().toUpperCase();
+            FileClient client = FileClientCreator.getClient(key, item.getValue());
+            if (client != null) {
+                map.put(key, client);
+            }
         }
 
         return map;
@@ -53,7 +53,9 @@ public abstract class AbstractClientSourceProvider implements ClientSourceProvid
         for (Map.Entry<String, FileClientProperties.ExtendRequestProperty> item : clientSourceMap.entrySet()) {
             String key = item.getKey().toUpperCase();
             FileClient client = FileClientCreator.getExtendClient(item.getValue());
-            map.put(key, client);
+            if (client != null) {
+                map.put(key, client);
+            }
         }
 
         return map;

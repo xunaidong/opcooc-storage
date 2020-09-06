@@ -16,6 +16,7 @@
  */
 package com.opcooc.storage.creator;
 
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.opcooc.storage.autoconfigure.FileClientProperties;
 import com.opcooc.storage.client.*;
@@ -26,8 +27,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -36,8 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileClientCreator {
 
-    public static FileClient getClient(ClientSource defaultSource, StorageProperty property) {
-        switch (defaultSource) {
+    public static FileClient getClient(String source, StorageProperty property) {
+        ClientSource clientSource;
+
+        try {
+            clientSource = EnumUtil.fromString(ClientSource.class, source);
+        } catch (IllegalArgumentException e) {
+            // 无自定义匹配
+            return null;
+        }
+
+        switch (clientSource) {
             case S3:
                 return new S3Client(property);
             case OSS:
@@ -55,7 +63,12 @@ public class FileClientCreator {
 
     public static FileClient getExtendClient(FileClientProperties.ExtendRequestProperty property) {
         // 反射获取 Request 对象，所以必须实现 1 个参数的构造方法
-        return ReflectUtil.newInstance(property.getClient(), (StorageProperty) property);
+        try {
+            return ReflectUtil.newInstance(property.getClient(), (StorageProperty) property);
+        } catch (IllegalArgumentException e) {
+            // 无自定义匹配
+            return null;
+        }
     }
 
 }

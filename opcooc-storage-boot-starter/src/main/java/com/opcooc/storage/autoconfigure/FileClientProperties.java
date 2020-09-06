@@ -46,12 +46,12 @@ public class FileClientProperties {
     /**
      * 默认的客户端类型
      */
-    private String defaultClient;
+    private String primary = "";
 
     /**
      * 内置配置
      */
-    private Map<ClientSource, StorageProperty> clientSource = new HashMap<>();
+    private Map<String, StorageProperty> client = new HashMap<>();
 
     /**
      * 自定义配置
