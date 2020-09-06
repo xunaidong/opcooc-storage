@@ -123,9 +123,7 @@ public interface FileClient {
      * @param stream     文件流
      * @return 文件上传后的信息
      */
-    default FileBasicInfo uploadObject(String objectName, InputStream stream) {
-        return uploadObject(getBucketName(), objectName, stream);
-    }
+    FileBasicInfo uploadObject(String objectName, InputStream stream);
 
     /**
      * 上传文件到服务器
@@ -144,9 +142,7 @@ public interface FileClient {
      * @param file       文件
      * @return 文件上传后的信息
      */
-    default FileBasicInfo uploadObject(String objectName, File file) {
-        return uploadObject(getBucketName(), objectName, file);
-    }
+    FileBasicInfo uploadObject(String objectName, File file);
 
     /**
      * 上传文件到服务器
@@ -165,9 +161,7 @@ public interface FileClient {
      * @param fullFilePath 文件路径
      * @return 文件上传后的信息
      */
-    default FileBasicInfo uploadObject(String objectName, String fullFilePath) {
-        return uploadObject(getBucketName(), objectName, fullFilePath);
-    }
+    FileBasicInfo uploadObject(String objectName, String fullFilePath);
     //--------------------------------------upload file end--------------------------------------
 
     //--------------------------------------copy file start--------------------------------------
@@ -199,9 +193,7 @@ public interface FileClient {
      * @param objectName    源文件完整路径
      * @param srcObjectName 目标文件完整路径
      */
-    default void copyObject(String objectName, String srcObjectName) {
-        copyObject(objectName, getBucketName(), srcObjectName);
-    }
+    void copyObject(String objectName, String srcObjectName);
 
     //--------------------------------------copy file end--------------------------------------
 
@@ -224,9 +216,7 @@ public interface FileClient {
      * @param recursive 是否递归
      * @return 文件信息集合
      */
-    default List<FileBasicInfo> listObjects(String prefix, boolean recursive) {
-        return listObjects(getBucketName(), prefix, recursive);
-    }
+    List<FileBasicInfo> listObjects(String prefix, boolean recursive);
 
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
@@ -249,9 +239,7 @@ public interface FileClient {
      * @param <T> 泛型
      * @return 文件信息集合
      */
-    default <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
-        return listObjects(getBucketName(), prefix, recursive, resultConverter);
-    }
+    <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter);
 
     /**
      * 获取对象元数据
@@ -268,9 +256,7 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return 文件信息
      */
-    default FileBasicInfo getObjectMetadata(String objectName) {
-        return getObjectMetadata(getBucketName(), objectName);
-    }
+    FileBasicInfo getObjectMetadata(String objectName);
 
     /**
      * 获取对象元数据
@@ -291,9 +277,7 @@ public interface FileClient {
      * @param <T> 泛型
      * @return 文件信息
      */
-    default <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {
-        return getObjectMetadata(getBucketName(), objectName, resultConverter);
-    }
+    <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter);
 
     /**
      * 判断对象是否存在
@@ -310,9 +294,7 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return 结果
      */
-    default boolean objectExist(String objectName) {
-        return objectExist(getBucketName(), objectName);
-    }
+    boolean objectExist(String objectName);
     //--------------------------------------get file Metadata end--------------------------------------
 
     //--------------------------------------get file object start--------------------------------------
@@ -332,9 +314,7 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return InputStream
      */
-    default InputStream getStreamObject(String objectName) {
-        return getStreamObject(getBucketName(), objectName);
-    }
+    InputStream getStreamObject(String objectName);
 
     /**
      * 获得文件
@@ -353,9 +333,7 @@ public interface FileClient {
      * @param file 文件
      * @return 文件
      */
-    default File getFileObject(String objectName, File file) {
-        return getFileObject(getBucketName(), objectName, file);
-    }
+    File getFileObject(String objectName, File file);
 
     /**
      * 获得文件
@@ -374,9 +352,7 @@ public interface FileClient {
      * @param filePath   文件path
      * @return 文件path
      */
-    default String getFilePathObject(String objectName, String filePath) {
-        return getFilePathObject(getBucketName(), objectName, filePath);
-    }
+    String getFilePathObject(String objectName, String filePath);
 
     /**
      * 获得文件 byte[]
@@ -393,9 +369,7 @@ public interface FileClient {
      * @param objectName 文件完整路径
      * @return byte
      */
-    default byte[] getByteObject(String objectName) {
-        return getByteObject(getBucketName(), objectName);
-    }
+    byte[] getByteObject(String objectName);
     //--------------------------------------get file object end--------------------------------------
 
     //--------------------------------------delete file start--------------------------------------
@@ -413,9 +387,7 @@ public interface FileClient {
      *
      * @param objectName 文件完整路径
      */
-    default void deleteObject(String objectName) {
-        deleteObject(getBucketName(), objectName);
-    }
+    void deleteObject(String objectName);
 
     /**
      * 删除文件集合
@@ -430,9 +402,7 @@ public interface FileClient {
      *
      * @param objectNames 文件完整路径集合
      */
-    default void deleteObjects(List<String> objectNames) {
-        deleteObjects(getBucketName(), objectNames);
-    }
+    void deleteObjects(List<String> objectNames);
     //--------------------------------------delete file end--------------------------------------
 
     //--------------------------------------get download url start--------------------------------------
@@ -454,9 +424,7 @@ public interface FileClient {
      * @param expiration 过期时间
      * @return 签名url
      */
-    default String getDownloadUrl(String objectName, Date expiration) {
-        return getDownloadUrl(getBucketName(), objectName, expiration);
-    }
+    String getDownloadUrl(String objectName, Date expiration);
 
     /**
      * 生成签名的URL，以使用get的HTTP方法访问文件(默认为5分钟)

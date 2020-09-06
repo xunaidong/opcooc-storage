@@ -166,6 +166,11 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public FileBasicInfo uploadObject(String objectName, InputStream stream) {
+        return uploadObject(getBucketName(), objectName, stream);
+    }
+
+    @Override
     public FileBasicInfo uploadObject(String bucketName, String objectName, File file) {
         try {
             client.putObject(bucketName, objectName, file);
@@ -176,12 +181,22 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public FileBasicInfo uploadObject(String objectName, File file) {
+        return uploadObject(getBucketName(), objectName, file);
+    }
+
+    @Override
     public FileBasicInfo uploadObject(String bucketName, String objectName, String fullFilePath) {
         try {
             return uploadObject(bucketName, objectName, FileUtil.touch(fullFilePath));
         } catch (Exception e) {
             throw new UploadException(e.getMessage());
         }
+    }
+
+    @Override
+    public FileBasicInfo uploadObject(String objectName, String fullFilePath) {
+        return uploadObject(getBucketName(), objectName, fullFilePath);
     }
 
     @Override
@@ -195,14 +210,29 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public void copyObject(String objectName, String srcObjectName) {
+        copyObject(objectName, getBucketName(), srcObjectName);
+    }
+
+    @Override
     public List<FileBasicInfo> listObjects(String bucketName, String prefix, boolean recursive) {
         return listConvertObjects(bucketName, prefix, recursive, info -> info);
+    }
+
+    @Override
+    public List<FileBasicInfo> listObjects(String prefix, boolean recursive) {
+        return listObjects(getBucketName(), prefix, recursive);
     }
 
     @Override
     public <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter) {
         Assert.notNull(resultConverter, "'resultConverter' cannot be null");
         return listConvertObjects(bucketName, prefix, recursive, resultConverter);
+    }
+
+    @Override
+    public <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
+        return listObjects(getBucketName(), prefix, recursive, resultConverter);
     }
 
     private <T> List<T> listConvertObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter) {
@@ -250,10 +280,20 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public FileBasicInfo getObjectMetadata(String objectName) {
+        return getObjectMetadata(getBucketName(), objectName);
+    }
+
+    @Override
     public <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter) {
         Assert.notNull(resultConverter, "'resultConverter' cannot be null");
         FileBasicInfo info = getObjectMetadata(bucketName, objectName);
         return resultConverter.convert(info);
+    }
+
+    @Override
+    public <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {
+        return getObjectMetadata(getBucketName(), objectName, resultConverter);
     }
 
     @Override
@@ -271,12 +311,22 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public InputStream getStreamObject(String objectName) {
+        return getStreamObject(getBucketName(), objectName);
+    }
+
+    @Override
     public boolean objectExist(String bucketName, String objectName) {
         try {
             return client.doesObjectExist(bucketName, objectName);
         } catch (Exception e) {
             throw new DownloadException(e.getMessage());
         }
+    }
+
+    @Override
+    public boolean objectExist(String objectName) {
+        return objectExist(getBucketName(), objectName);
     }
 
     @Override
@@ -294,6 +344,11 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public File getFileObject(String objectName, File file) {
+        return getFileObject(getBucketName(), objectName, file);
+    }
+
+    @Override
     public String getFilePathObject(String bucketName, String objectName, String filePath) {
         try {
             //判断对象是否存在
@@ -308,12 +363,22 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public String getFilePathObject(String objectName, String filePath) {
+        return getFilePathObject(getBucketName(), objectName, filePath);
+    }
+
+    @Override
     public byte[] getByteObject(String bucketName, String objectName) {
         try (InputStream inputStream = getStreamObject(bucketName, objectName)) {
             return IoUtils.toByteArray(inputStream);
         } catch (Exception e) {
             throw new DownloadException(e.getMessage());
         }
+    }
+
+    @Override
+    public byte[] getByteObject(String objectName) {
+        return getByteObject(getBucketName(), objectName);
     }
 
     @Override
@@ -324,6 +389,11 @@ public abstract class AbstractS3Client implements FileClient {
         } catch (Exception e) {
             throw new ObjectException(e.getMessage());
         }
+    }
+
+    @Override
+    public void deleteObject(String objectName) {
+        deleteObject(getBucketName(), objectName);
     }
 
     @Override
@@ -341,6 +411,11 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
+    public void deleteObjects(List<String> objectNames) {
+        deleteObjects(getBucketName(), objectNames);
+    }
+
+    @Override
     public String getDownloadUrl(String bucketName, String objectName, Date expiration) {
         try {
             URL url = client.generatePresignedUrl(bucketName, objectName, expiration);
@@ -348,6 +423,11 @@ public abstract class AbstractS3Client implements FileClient {
         } catch (Exception e) {
             throw new PresignedException(e.getMessage());
         }
+    }
+
+    @Override
+    public String getDownloadUrl(String objectName, Date expiration) {
+        return getDownloadUrl(getBucketName(), objectName, expiration);
     }
 
     @Override

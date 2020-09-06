@@ -32,6 +32,8 @@ public class StorageConstant {
 
     public static final int INDEX_NOT_FOUND = -1;
 
+    public static final String PATH_SEPARATOR = "/";
+
     private static final String STORAGE_PREFIX = "#";
 
     public static final String NO_SOURCE = "source cannot be null";

@@ -16,6 +16,7 @@
  */
 package com.opcooc.storage.utils;
 
+import cn.hutool.core.util.ObjectUtil;
 import org.apache.tika.Tika;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -41,6 +42,12 @@ public class StorageUtil {
 
     public static HttpServletRequest getHttpServletRequest(){
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+    }
+
+    public static String getFullPath(String locationPath, String path) {
+        locationPath = ObjectUtil.defaultIfNull(locationPath, "");
+        path = ObjectUtil.defaultIfNull(path, "");
+        return locationPath + StorageConstant.PATH_SEPARATOR + path;
     }
 
 }

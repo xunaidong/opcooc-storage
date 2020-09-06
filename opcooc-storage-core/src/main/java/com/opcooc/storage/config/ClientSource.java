@@ -25,13 +25,14 @@ package com.opcooc.storage.config;
 public enum ClientSource {
 
     /**
-     * NONE, S3, OSS, COS, MINIO, QINIU, HDFS
+     * NONE, S3, OSS, COS, MINIO, QINIU, LOCAL, HDFS
      */
     S3,
     OSS,
     COS,
     MINIO,
     QINIU,
+    LOCAL,
     HDFS;
 
     public String getLowerCaseSource(){

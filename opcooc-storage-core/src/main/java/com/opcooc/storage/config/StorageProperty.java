@@ -46,4 +46,6 @@ public class StorageProperty {
     private String domain;
 
     private String basePath;
+
+    private String location;
 }
