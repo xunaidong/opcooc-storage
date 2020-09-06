@@ -16,6 +16,9 @@
  */
 package com.opcooc.storage.aop;
 
+import com.opcooc.storage.exception.ClientException;
+import com.opcooc.storage.processor.AutoStorageProcessor;
+import com.opcooc.storage.processor.StorageProcessor;
 import com.opcooc.storage.processor.StorageProcessorManager;
 import com.opcooc.storage.support.StorageAttribute;
 import com.opcooc.storage.support.StorageClassResolver;
@@ -23,6 +26,8 @@ import com.opcooc.storage.utils.StorageAttributeContextHolder;
 import lombok.Setter;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author shenqicheng
@@ -49,12 +54,26 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
 
     private StorageAttribute determineStorage(MethodInvocation invocation) {
         StorageAttribute storage = RESOLVER.getStorageKey(invocation.getMethod(), invocation.getThis());
-        storage.setClient(convertAttribute(invocation, storage.getClient()));
-        storage.setBucket(convertAttribute(invocation, storage.getBucket()));
+
+        StorageProcessor processor = getStorageProcessor(storage.getProcessor());
+
+        storage.setClient(convertAttribute(invocation, storage.getClient(), processor));
+        storage.setBucket(convertAttribute(invocation, storage.getBucket(), processor));
         return storage;
     }
 
-    private String convertAttribute(MethodInvocation invocation, String attr) {
+    private String convertAttribute(MethodInvocation invocation, String attr, StorageProcessor processor) {
+        if(processor != null){
+            return processor.doDetermineStorage(invocation, attr);
+        }
         return (attr != null && attr.startsWith(PREFIX)) ? processorManager.determineStorage(invocation, attr) : attr;
+    }
+
+    private StorageProcessor getStorageProcessor(Class<? extends StorageProcessor> processorClazz) {
+        try {
+            return processorClazz != AutoStorageProcessor.class ? processorClazz.getDeclaredConstructor().newInstance() : null;
+        }catch (Exception e) {
+            throw new ClientException("Can not instance custom converter:" + processorClazz.getName());
+        }
     }
 }
