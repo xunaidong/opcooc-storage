@@ -31,7 +31,7 @@ public class AutoStorageProcessor implements StorageProcessor{
 
     @Override
     public String doDetermineStorage(MethodInvocation invocation, String key) {
-        return null;
+        return "";
     }
 
     @Override

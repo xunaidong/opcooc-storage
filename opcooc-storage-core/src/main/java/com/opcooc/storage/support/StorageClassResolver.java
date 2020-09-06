@@ -46,7 +46,7 @@ public class StorageClassResolver {
     public StorageAttribute getStorageKey(Method method, Object targetObject) {
 
         if (method.getDeclaringClass() == Object.class) {
-            return StorageAttribute.builder().build();
+            return null;
         }
 
         Object cacheKey = getCacheKey(method, targetObject.getClass());
@@ -54,7 +54,7 @@ public class StorageClassResolver {
         if (storageAttr == null) {
             storageAttr = computeStorage(method, targetObject);
             if (storageAttr == null) {
-                return StorageAttribute.builder().build();
+                return null;
             }
             this.storageCache.put(cacheKey, storageAttr);
         }

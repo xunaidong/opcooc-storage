@@ -27,7 +27,6 @@ import lombok.Setter;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * @author shenqicheng
@@ -55,15 +54,19 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
     private StorageAttribute determineStorage(MethodInvocation invocation) {
         StorageAttribute storage = RESOLVER.getStorageKey(invocation.getMethod(), invocation.getThis());
 
-        StorageProcessor processor = getStorageProcessor(storage.getProcessor());
+        if (storage == null) {
+            return null;
+        }
 
+        StorageProcessor processor = getStorageProcessor(storage.getProcessor());
         storage.setClient(convertAttribute(invocation, storage.getClient(), processor));
         storage.setBucket(convertAttribute(invocation, storage.getBucket(), processor));
+
         return storage;
     }
 
     private String convertAttribute(MethodInvocation invocation, String attr, StorageProcessor processor) {
-        if(processor != null){
+        if (processor != null) {
             return processor.doDetermineStorage(invocation, attr);
         }
         return (attr != null && attr.startsWith(PREFIX)) ? processorManager.determineStorage(invocation, attr) : attr;
@@ -71,9 +74,9 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
 
     private StorageProcessor getStorageProcessor(Class<? extends StorageProcessor> processorClazz) {
         try {
-            return processorClazz != AutoStorageProcessor.class ? processorClazz.getDeclaredConstructor().newInstance() : null;
-        }catch (Exception e) {
-            throw new ClientException("Can not instance custom converter:" + processorClazz.getName());
+            return (processorClazz != null && processorClazz != AutoStorageProcessor.class) ? processorClazz.getDeclaredConstructor().newInstance() : null;
+        } catch (Exception e) {
+            throw new ClientException("Can not instance custom processor:" + processorClazz.getName());
         }
     }
 }
