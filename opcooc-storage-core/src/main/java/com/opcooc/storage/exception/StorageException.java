@@ -29,6 +29,10 @@ public class StorageException extends RuntimeException {
         super(message);
     }
 
+    public StorageException(Exception e) {
+        this("method: [%s] error message: [%s]", e.getClass().getSimpleName(), e.getMessage());
+    }
+
     public StorageException(String format, Object... args) {
         this(String.format(format, args));
     }
