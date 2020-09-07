@@ -18,21 +18,20 @@ package com.opcooc.storage.utils;
 
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
-import com.opcooc.storage.exception.ClientException;
+import com.opcooc.storage.exception.StorageException;
 
 import java.util.Objects;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
 public class StorageChecker {
 
-    public static void checkConfig(StorageProperty config, ClientSource source) {
-        if (Objects.isNull(config.getAccessKey()) || Objects.isNull(config.getSecretKey()) || Objects.isNull(config.getEndPoint()) || Objects.isNull(config.getBucketName())) {
-            throw new ClientException(String.format("init storage client [%s] error: param not missing", source));
+    public static void checkS3Config(StorageProperty config, ClientSource source) {
+        if (Objects.isNull(config.getAccessKey()) || Objects.isNull(config.getSecretKey()) ||
+                Objects.isNull(config.getEndPoint()) || Objects.isNull(config.getBucketName())) {
+            throw new StorageException("init storage client [%s] error: incomplete param", source);
         }
     }
 

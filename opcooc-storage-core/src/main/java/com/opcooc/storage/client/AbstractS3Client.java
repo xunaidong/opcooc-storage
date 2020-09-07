@@ -67,7 +67,7 @@ public abstract class AbstractS3Client implements FileClient {
         this.config = config;
         this.source = source;
         // 校验配置合法性
-        StorageChecker.checkConfig(config, source);
+        StorageChecker.checkS3Config(config, source);
         // 初始化client
         this.client = init(config);
     }
@@ -90,7 +90,7 @@ public abstract class AbstractS3Client implements FileClient {
             client.putObject(putObjectRequest);
             log.debug("create folder [{}] path success", path);
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractS3Client implements FileClient {
             log.debug("create [{}] bucket name success", bucket.getName());
             return bucket.getName();
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractS3Client implements FileClient {
             List<Bucket> buckets = client.listBuckets();
             return buckets.stream().map(Bucket::getName).collect(toList());
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -149,7 +149,7 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             return client.doesBucketExistV2(bucketName);
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -161,7 +161,7 @@ public abstract class AbstractS3Client implements FileClient {
             client.putObject(bucketName, objectName, stream, metadata);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractS3Client implements FileClient {
             client.putObject(bucketName, objectName, file);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             return uploadObject(bucketName, objectName, FileUtil.touch(fullFilePath));
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -190,7 +190,7 @@ public abstract class AbstractS3Client implements FileClient {
             // Copy the object into a new object in the same bucket.
             client.copyObject(new CopyObjectRequest(bucketName, objectName, srcBucketName, srcObjectName));
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -237,7 +237,7 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             ObjectMetadata object = client.getObjectMetadata(bucketName, objectName);
             if (object == null) {
-                throw new ObjectException("文件不存在!");
+                throw new StorageException("文件不存在!");
             }
             info.setKey(objectName);
             info.setSize(object.getContentLength());
@@ -245,7 +245,7 @@ public abstract class AbstractS3Client implements FileClient {
             info.setLastModified(object.getLastModified());
             return info;
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -261,12 +261,12 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException("文件不存在!");
             }
             S3Object s3Object = client.getObject(bucketName, objectName);
             return s3Object.getObjectContent();
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -275,7 +275,7 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             return client.doesObjectExist(bucketName, objectName);
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -284,12 +284,12 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException("文件不存在!");
             }
             client.getObject(new GetObjectRequest(bucketName, objectName), file);
             return file;
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -298,12 +298,12 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException("文件不存在!");
             }
             getFileObject(bucketName, objectName, FileUtil.touch(filePath));
             return filePath;
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -312,7 +312,7 @@ public abstract class AbstractS3Client implements FileClient {
         try (InputStream inputStream = getStreamObject(bucketName, objectName)) {
             return IoUtils.toByteArray(inputStream);
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -322,7 +322,7 @@ public abstract class AbstractS3Client implements FileClient {
             client.deleteObject(bucketName, objectName);
             log.debug("delete object: [{}] by bucket name: [{}] success", bucketName, objectName);
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -336,7 +336,7 @@ public abstract class AbstractS3Client implements FileClient {
             DeleteObjectsRequest request = new DeleteObjectsRequest(bucketName).withKeys(objects);
             client.deleteObjects(request);
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
@@ -346,13 +346,13 @@ public abstract class AbstractS3Client implements FileClient {
             URL url = client.generatePresignedUrl(bucketName, objectName, expiration);
             return url.toExternalForm();
         } catch (Exception e) {
-            throw new PresignedException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 
     @Override
     public Map<String, String> postUrl(String bucketName, String objectName, Date expiration) {
-        throw new PresignedException("method not implement!");
+        throw new StorageException("method not implement!");
     }
 
     @Override
@@ -372,7 +372,7 @@ public abstract class AbstractS3Client implements FileClient {
             URL url = client.generatePresignedUrl(generatePresignedUrlRequest);
             return url.toExternalForm();
         } catch (Exception e) {
-            throw new PresignedException(e.getMessage());
+            throw new StorageException(e.getMessage());
         }
     }
 

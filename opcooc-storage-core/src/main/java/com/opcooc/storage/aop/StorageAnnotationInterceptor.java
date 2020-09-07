@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.exception.ClientException;
+import com.opcooc.storage.exception.StorageException;
 import com.opcooc.storage.processor.AutoStorageProcessor;
 import com.opcooc.storage.processor.StorageProcessor;
 import com.opcooc.storage.processor.StorageProcessorManager;
@@ -76,7 +76,7 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
         try {
             return (processorClazz != null && processorClazz != AutoStorageProcessor.class) ? processorClazz.getDeclaredConstructor().newInstance() : null;
         } catch (Exception e) {
-            throw new ClientException("Can not instance custom processor:" + processorClazz.getName());
+            throw new StorageException("can not instance custom processor: [%s]",processorClazz.getName());
         }
     }
 }

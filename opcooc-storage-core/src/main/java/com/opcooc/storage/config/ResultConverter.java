@@ -27,6 +27,7 @@ public interface ResultConverter<T> {
 
     /**
      * 对文件信息进行处理 .
+     *
      * @param info 基础文件信息.
      * @return 处理后的信息.
      */

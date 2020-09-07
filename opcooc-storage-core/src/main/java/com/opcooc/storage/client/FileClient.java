@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -231,11 +229,11 @@ public interface FileClient {
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
      *
-     * @param bucketName 存储桶名称
-     * @param prefix     指定前缀
-     * @param recursive  是否递归
-     * @param resultConverter  文件信息转换器
-     * @param <T> 泛型
+     * @param bucketName      存储桶名称
+     * @param prefix          指定前缀
+     * @param recursive       是否递归
+     * @param resultConverter 文件信息转换器
+     * @param <T>             泛型
      * @return 文件信息集合
      */
     <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter);
@@ -243,10 +241,10 @@ public interface FileClient {
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
      *
-     * @param prefix    指定前缀
-     * @param recursive 是否递归
-     * @param resultConverter  文件信息转换器
-     * @param <T> 泛型
+     * @param prefix          指定前缀
+     * @param recursive       是否递归
+     * @param resultConverter 文件信息转换器
+     * @param <T>             泛型
      * @return 文件信息集合
      */
     default <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
@@ -275,10 +273,10 @@ public interface FileClient {
     /**
      * 获取对象元数据
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param resultConverter  文件信息转换器
-     * @param <T> 泛型
+     * @param bucketName      储桶名称
+     * @param objectName      文件完整路径
+     * @param resultConverter 文件信息转换器
+     * @param <T>             泛型
      * @return 文件信息
      */
     <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter);
@@ -286,9 +284,9 @@ public interface FileClient {
     /**
      * 获取对象元数据
      *
-     * @param objectName 文件完整路径
-     * @param resultConverter  文件信息转换器
-     * @param <T> 泛型
+     * @param objectName      文件完整路径
+     * @param resultConverter 文件信息转换器
+     * @param <T>             泛型
      * @return 文件信息
      */
     default <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {
@@ -341,7 +339,7 @@ public interface FileClient {
      *
      * @param bucketName 储桶名称
      * @param objectName 文件完整路径
-     * @param file 文件
+     * @param file       文件
      * @return 文件
      */
     File getFileObject(String bucketName, String objectName, File file);
@@ -350,7 +348,7 @@ public interface FileClient {
      * 获得文件
      *
      * @param objectName 文件完整路径
-     * @param file 文件
+     * @param file       文件
      * @return 文件
      */
     default File getFileObject(String objectName, File file) {
@@ -512,7 +510,7 @@ public interface FileClient {
      * @param bucketName 储桶名称
      * @param objectName 文件完整路径
      * @param expiration 过期时间
-     * @param specType 是否添加文件类型验证
+     * @param specType   是否添加文件类型验证
      * @return 生成签名的URL
      */
     String getUploadUrl(String bucketName, String objectName, Date expiration, boolean specType);
@@ -544,7 +542,7 @@ public interface FileClient {
      *
      * @param objectName 文件完整路径
      * @param expiration 过期时间
-     * @param specType 是否添加文件类型验证
+     * @param specType   是否添加文件类型验证
      * @return 生成签名的URL
      */
     default String getUploadUrl(String objectName, Date expiration, boolean specType) {
@@ -555,7 +553,7 @@ public interface FileClient {
      * 生成签名的URL，以使用特put的HTTP方法访问(默认为5分钟)
      *
      * @param objectName 文件完整路径
-     * @param specType 是否添加文件类型验证
+     * @param specType   是否添加文件类型验证
      * @return 生成签名的URL
      */
     default String getUploadUrl(String objectName, boolean specType) {

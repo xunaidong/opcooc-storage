@@ -17,8 +17,6 @@
 package com.opcooc.storage.config;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -33,10 +31,6 @@ public enum ClientSource {
     MINIO,
     QINIU,
     HDFS;
-
-    public String getLowerCaseSource(){
-        return this.name().toLowerCase();
-    }
 
 
 }
