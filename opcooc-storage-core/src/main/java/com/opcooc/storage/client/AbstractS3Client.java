@@ -168,6 +168,7 @@ public abstract class AbstractS3Client implements FileClient {
         log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(stream.available());
             metadata.setContentType(StorageUtil.TIKA.detect(stream));
             client.putObject(bucketName, objectName, stream, metadata);
             return getObjectMetadata(bucketName, objectName);

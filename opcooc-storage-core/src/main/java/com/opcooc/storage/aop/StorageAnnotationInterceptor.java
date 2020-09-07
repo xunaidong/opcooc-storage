@@ -59,17 +59,18 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
         }
 
         StorageProcessor processor = getStorageProcessor(storage.getProcessor());
-        storage.setClient(convertAttribute(invocation, storage.getClient(), processor));
-        storage.setBucket(convertAttribute(invocation, storage.getBucket(), processor));
+        String client = convertAttribute(invocation, storage.getClient(), processor);
+        String bucket = convertAttribute(invocation, storage.getBucket(), processor);
 
-        return storage;
+        return StorageAttribute.builder().client(client).bucket(bucket).build();
     }
 
     private String convertAttribute(MethodInvocation invocation, String attr, StorageProcessor processor) {
-        if (processor != null) {
+        boolean isProcessor = attr != null && attr.startsWith(PREFIX);
+        if (processor != null && isProcessor) {
             return processor.doDetermineStorage(invocation, attr);
         }
-        return (attr != null && attr.startsWith(PREFIX)) ? processorManager.determineStorage(invocation, attr) : attr;
+        return isProcessor ? processorManager.determineStorage(invocation, attr) : attr;
     }
 
     private StorageProcessor getStorageProcessor(Class<? extends StorageProcessor> processorClazz) {

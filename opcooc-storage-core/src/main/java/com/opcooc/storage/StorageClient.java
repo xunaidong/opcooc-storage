@@ -17,6 +17,7 @@
 package com.opcooc.storage;
 
 import cn.hutool.core.util.StrUtil;
+import com.amazonaws.SDKGlobalConfiguration;
 import com.opcooc.storage.client.FileClient;
 import com.opcooc.storage.exception.StorageException;
 import com.opcooc.storage.provider.ClientSourceProvider;
