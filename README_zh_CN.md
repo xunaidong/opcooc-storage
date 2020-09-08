@@ -65,12 +65,12 @@ opcooc-storage 将 AWS S3 协议进行了封装和扩展
             <dependency>
               <groupId>com.opcooc</groupId>
               <artifactId>opcooc-storage-boot-starter</artifactId>
-              <version>1.1.0</version>
+              <version>1.1.1</version>
             </dependency>
         ```
     -   Gradle
         ```groovy
-        compile group: 'com.opcooc', name: 'opcooc-storage-boot-starter', version: '1.1.0'
+        compile group: 'com.opcooc', name: 'opcooc-storage-boot-starter', version: '1.1.1'
         ```
 
 -   添加配置，在 `application.yml` 中添加配置配置信息
