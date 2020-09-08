@@ -78,8 +78,8 @@ opcooc-storage encapsulates and expands aws s3
     ```yaml
         opcooc:
           enabled: true
-          default-client: MINIO
-          client-source:
+          primary: MINIO
+          client:
             MINIO:
               bucket-name: opcooc
               end-point: http://xxx:9000
