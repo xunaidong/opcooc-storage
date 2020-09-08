@@ -17,7 +17,7 @@ buildscript {
 
 allprojects {
     group = 'com.opcooc'
-    version = "1.1.0"
+    version = "1.1.1"
 }
 
 description = "opcooc-storage - 简化第三方对象存储操作"
@@ -144,8 +144,8 @@ subprojects {
             maven {
                 def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-
+//                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                url = "http://192.168.1.194:8081/repository/maven-releases/"
                 credentials {
                     username project.sonatypeUsername
                     password project.sonatypePassword

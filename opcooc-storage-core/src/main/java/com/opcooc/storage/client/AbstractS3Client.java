@@ -169,7 +169,7 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(stream.available());
-            metadata.setContentType(StorageUtil.TIKA.detect(stream));
+            metadata.setContentType(StorageUtil.TIKA.detect(objectName));
             client.putObject(bucketName, objectName, stream, metadata);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
