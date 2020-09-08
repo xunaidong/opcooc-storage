@@ -32,6 +32,8 @@ import lombok.ToString;
 @ToString
 public class StorageAttribute {
 
+    public static final StorageAttribute DEFAULT = StorageAttribute.builder().build();
+
     private String client;
 
     private String bucket;

@@ -18,15 +18,12 @@ package com.opcooc.storage.provider;
 
 import com.opcooc.storage.autoconfigure.FileClientProperties;
 import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */

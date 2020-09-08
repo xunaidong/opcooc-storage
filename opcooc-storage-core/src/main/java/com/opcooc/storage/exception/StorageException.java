@@ -17,22 +17,32 @@
 package com.opcooc.storage.exception;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
-public class UploadException extends ObjectException {
+public class StorageException extends RuntimeException {
 
-    public UploadException() {
+    public StorageException() {
     }
 
-    public UploadException(String message) {
+    public StorageException(String message) {
         super(message);
     }
 
-    public UploadException(String message, Throwable cause) {
+    public StorageException(Exception e) {
+        this("method: [%s] error message: [%s]", e.getClass().getSimpleName(), e.getMessage());
+    }
+
+    public StorageException(String format, Object... args) {
+        this(String.format(format, args));
+    }
+
+    public StorageException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public StorageException(String format, Throwable cause, Object... args) {
+        this(String.format(format, args), cause);
     }
 
 }

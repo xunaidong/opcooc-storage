@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * 动态 切换 client 和 bucketName(或者文件第一个path)
+ *
  * @author shenqicheng
  * @since 2020-08-30 10:30
  */
@@ -37,18 +38,21 @@ public @interface Storage {
 
     /**
      * client name
+     *
      * @return The name of the client to be switch
      */
     String client() default "";
 
     /**
      * bucket name
+     *
      * @return The name of the bucket to be switch
      */
     String bucket() default "";
 
     /**
      * processor todo 是否需要分开配置
+     *
      * @return StorageProcessor
      */
     Class<? extends StorageProcessor> processor() default AutoStorageProcessor.class;

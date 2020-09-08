@@ -27,8 +27,6 @@ import com.opcooc.storage.config.StorageProperty;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -49,7 +47,7 @@ public class QinIuClient extends AbstractS3Client {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
                         config.getEndPoint(),
-                        source.getLowerCaseSource()))
+                        source.name()))
                 .build();
 
         log.debug("init storage client [{}] ok", source.name());

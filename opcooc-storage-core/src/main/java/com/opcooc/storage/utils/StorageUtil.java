@@ -23,8 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
- *
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
@@ -32,14 +30,14 @@ public class StorageUtil {
 
     public static final Tika TIKA = new Tika();
 
-    public static String checkFolder(String path){
+    public static String checkFolder(String path) {
         if (null == path) {
             return "";
         }
         return path.endsWith("/") ? path : path + "/";
     }
 
-    public static HttpServletRequest getHttpServletRequest(){
+    public static HttpServletRequest getHttpServletRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 

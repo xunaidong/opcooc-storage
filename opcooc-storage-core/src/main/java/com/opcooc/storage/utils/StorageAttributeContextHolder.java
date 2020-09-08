@@ -85,7 +85,7 @@ public final class StorageAttributeContextHolder {
      * @param attr 存储配置名称
      */
     public static void push(StorageAttribute attr) {
-        LOOKUP_KEY_HOLDER.get().push(attr == null ? StorageAttribute.builder().build() : attr);
+        LOOKUP_KEY_HOLDER.get().push(attr == null ? StorageAttribute.DEFAULT : attr);
     }
 
     /**

@@ -18,7 +18,7 @@ package com.opcooc.storage;
 
 import cn.hutool.core.util.StrUtil;
 import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.exception.ClientException;
+import com.opcooc.storage.exception.StorageException;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import com.opcooc.storage.utils.StorageAttributeContextHolder;
 import lombok.Setter;
@@ -59,43 +59,47 @@ public class StorageClient implements InitializingBean, DisposableBean {
     public synchronized void addClient(String source, FileClient client) {
         if (!clientMap.containsKey(source)) {
             clientMap.put(source, client);
-            log.info("add named [{}] storage client source success", source);
+            log.info("opcooc-storage - load named [{}] storage client source success", source);
         } else {
-            log.warn("add named [{}] storage client source failed, because it already exist", source);
+            log.warn("opcooc-storage - load named [{}] storage client source failed, because it already exist", source);
         }
     }
 
     public synchronized void removeClient(String source) {
         if (StrUtil.isBlank(source)) {
-            throw new ClientException("remove parameter could not be empty");
+            throw new StorageException("remove parameter could not be empty");
         }
         if (primary.equals(source)) {
-            throw new ClientException("could not be remove default client");
+            throw new StorageException("could not be remove primary client");
         }
         if (clientMap.containsKey(source)) {
             FileClient client = clientMap.get(source);
             try {
                 closeClient(client);
+                log.debug("opcooc-storage - the client named [{}] closed success", source);
             } catch (Exception e) {
-                log.error("remove the client named [{}]  failed", source, e);
+                log.error("opcooc-storage - emove the client named [{}] failed", source, e);
             }
             clientMap.remove(source);
+            log.info("opcooc-storage - remove the client named [{}] success", source);
         } else {
-            log.warn("could not find a client named [{}]", source);
+            log.warn("opcooc-storage - could not find a client named [{}]", source);
         }
     }
 
     public FileClient getClient(String source) {
 
         if (StrUtil.isBlank(source)) {
+            log.warn("opcooc-storage - source is empty, switch to primary client");
             return getPrimaryClient();
         }
 
         if (clientMap.containsKey(source)) {
-            log.debug("get the client named is [{}]", source);
+            log.debug("opcooc-storage - switch to the client named [{}]", source);
             return clientMap.get(source);
         }
 
+        log.warn("opcooc-storage - could not find a client named [{}], switch to primary client", source);
         return getPrimaryClient();
     }
 
@@ -103,34 +107,38 @@ public class StorageClient implements InitializingBean, DisposableBean {
     public void afterPropertiesSet() throws Exception {
         Map<String, FileClient> clientSources = clientProvider.loadClientSources();
 
-        for (Map.Entry<String, FileClient> dsItem : clientSources.entrySet()) {
-            addClient(dsItem.getKey(), dsItem.getValue());
-        }
+        //添加客户端信息
+        clientSources.forEach(this::addClient);
 
-        log.info("a total of [{}] clients were success loaded", clientMap.size());
+        //检查是否设置了默认客户端
+        if (clientMap.containsKey(primary)) {
+            log.info("opcooc-storage - a total of [{}] clients were success loaded, primary client named [{}]", clientMap.size(), primary);
+        } else {
+            log.warn("opcooc-storage - a total of [{}] clients were success loaded, no primary client available", clientMap.size());
+        }
     }
 
     @Override
     public void destroy() throws Exception {
-        log.info("file client start closing ....");
+        log.info("opcooc-storage - client start closing ....");
         for (Map.Entry<String, FileClient> item : clientMap.entrySet()) {
-            log.info("file client [{}] closed success", item.getKey());
             closeClient(item.getValue());
+            log.debug("opcooc-storage - the client named [{}] closed success", item.getKey());
         }
-        log.info("file client all closed success,bye");
+        log.info("opcooc-storage - client all closed success,bye");
     }
 
-    private void closeClient(FileClient client) throws Exception {
+    private void closeClient(FileClient client) {
         client.shutdown();
     }
 
     private FileClient getPrimaryClient() {
-        log.debug("get default client the client named is [{}]", primary);
+        log.debug("opcooc-storage - get the primary client named [{}]", primary);
 
         FileClient client = clientMap.get(primary);
 
         if (client == null) {
-            throw new ClientException("no primary client !");
+            throw new StorageException("no primary client");
         }
         return client;
     }

@@ -48,6 +48,8 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public abstract class AbstractS3Client implements FileClient {
 
+    private static final String ERROR_MESSAGE = "bucketName: [%s], file [%s] does not exist";
+
     /**
      * client
      */
@@ -67,7 +69,7 @@ public abstract class AbstractS3Client implements FileClient {
         this.config = config;
         this.source = source;
         // 校验配置合法性
-        StorageChecker.checkConfig(config, source);
+        StorageChecker.checkS3Config(config, source);
         // 初始化client
         this.client = init(config);
     }
@@ -82,15 +84,15 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public void createFolder(String bucketName, String path) {
+        log.debug("opcooc-storage - bucketName: [{}], create folder path: [{}]", bucketName, path);
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(0);
         PutObjectRequest putObjectRequest =
                 new PutObjectRequest(bucketName, StorageUtil.checkFolder(path), new ByteArrayInputStream(new byte[]{}), metadata);
         try {
             client.putObject(putObjectRequest);
-            log.debug("create folder [{}] path success", path);
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
@@ -103,75 +105,86 @@ public abstract class AbstractS3Client implements FileClient {
     @Override
     public String createBucket(String bucketName) {
         if (doesBucketExist(bucketName)) {
-            log.debug("exists [{}] bucket name ", bucketName);
+            log.debug("opcooc-storage - exist [{}] bucketNamed ", bucketName);
             return bucketName;
         }
 
         try {
             Bucket bucket = client.createBucket(bucketName);
-            log.debug("create [{}] bucket name success", bucket.getName());
+            log.debug("opcooc-storage - create [{}] bucketName success", bucket.getName());
             return bucket.getName();
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public void deleteBucket(String bucketName) {
-        ObjectListing objectListing = client.listObjects(bucketName);
-        while (true) {
-            for (S3ObjectSummary s3ObjectSummary : objectListing.getObjectSummaries()) {
-                client.deleteObject(bucketName, s3ObjectSummary.getKey());
-                log.debug("delete bucket name: [{}], object: [{}] success", bucketName, s3ObjectSummary.getKey());
-            }
+        try {
+            ObjectListing objectListing = client.listObjects(bucketName);
+            while (true) {
+                for (S3ObjectSummary s3ObjectSummary : objectListing.getObjectSummaries()) {
+                    client.deleteObject(bucketName, s3ObjectSummary.getKey());
+                    log.debug("opcooc-storage - bucketName: [{}], delete object: [{}] success", bucketName, s3ObjectSummary.getKey());
+                }
 
-            if (objectListing.isTruncated()) {
-                objectListing = client.listNextBatchOfObjects(objectListing);
-            } else {
-                break;
+                if (objectListing.isTruncated()) {
+                    objectListing = client.listNextBatchOfObjects(objectListing);
+                } else {
+                    break;
+                }
             }
+            client.deleteBucket(bucketName);
+        } catch (Exception e) {
+            throw new StorageException(e);
         }
-        client.deleteBucket(bucketName);
+
     }
 
     @Override
     public List<String> listBuckets() {
         try {
             List<Bucket> buckets = client.listBuckets();
-            return buckets.stream().map(Bucket::getName).collect(toList());
+            List<String> result = buckets.stream().map(Bucket::getName).collect(toList());
+            log.debug("opcooc-storage - bucketNames: [{}]", result);
+            return result;
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public boolean doesBucketExist(String bucketName) {
+        log.debug("opcooc-storage - bucketName: [{}]", bucketName);
         try {
             return client.doesBucketExistV2(bucketName);
         } catch (Exception e) {
-            throw new BucketException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentType(StorageUtil.TIKA.detect(stream));
+            metadata.setContentLength(stream.available());
+            metadata.setContentType(StorageUtil.TIKA.detect(objectName));
             client.putObject(bucketName, objectName, stream, metadata);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public FileBasicInfo uploadObject(String bucketName, String objectName, File file) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             client.putObject(bucketName, objectName, file);
             return getObjectMetadata(bucketName, objectName);
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
@@ -180,17 +193,18 @@ public abstract class AbstractS3Client implements FileClient {
         try {
             return uploadObject(bucketName, objectName, FileUtil.touch(fullFilePath));
         } catch (Exception e) {
-            throw new UploadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public void copyObject(String bucketName, String objectName, String srcBucketName, String srcObjectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}], srcBucketName: [{}], srcObjectName: [{}] copy success",
+                bucketName, objectName, srcBucketName, srcObjectName);
         try {
-            // Copy the object into a new object in the same bucket.
             client.copyObject(new CopyObjectRequest(bucketName, objectName, srcBucketName, srcObjectName));
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
@@ -233,19 +247,21 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public FileBasicInfo getObjectMetadata(String bucketName, String objectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         FileBasicInfo info = new FileBasicInfo();
         try {
             ObjectMetadata object = client.getObjectMetadata(bucketName, objectName);
             if (object == null) {
-                throw new ObjectException("文件不存在!");
+                throw new StorageException(ERROR_MESSAGE, bucketName, objectName);
             }
             info.setKey(objectName);
             info.setSize(object.getContentLength());
             info.setBucketName(bucketName);
             info.setLastModified(object.getLastModified());
+            log.debug("opcooc-storage - objectMetadata: [{}]", info.toString());
             return info;
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
@@ -258,71 +274,76 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public InputStream getStreamObject(String bucketName, String objectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException(ERROR_MESSAGE, bucketName, objectName);
             }
             S3Object s3Object = client.getObject(bucketName, objectName);
             return s3Object.getObjectContent();
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public boolean objectExist(String bucketName, String objectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             return client.doesObjectExist(bucketName, objectName);
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public File getFileObject(String bucketName, String objectName, File file) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException(ERROR_MESSAGE, bucketName, objectName);
             }
             client.getObject(new GetObjectRequest(bucketName, objectName), file);
             return file;
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public String getFilePathObject(String bucketName, String objectName, String filePath) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}], filePath: [{}]", bucketName, objectName, filePath);
         try {
             //判断对象是否存在
             if (!objectExist(bucketName, objectName)) {
-                throw new DownloadException("文件不存在!");
+                throw new StorageException(ERROR_MESSAGE, bucketName, objectName);
             }
             getFileObject(bucketName, objectName, FileUtil.touch(filePath));
             return filePath;
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public byte[] getByteObject(String bucketName, String objectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try (InputStream inputStream = getStreamObject(bucketName, objectName)) {
             return IoUtils.toByteArray(inputStream);
         } catch (Exception e) {
-            throw new DownloadException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public void deleteObject(String bucketName, String objectName) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
         try {
             client.deleteObject(bucketName, objectName);
-            log.debug("delete object: [{}] by bucket name: [{}] success", bucketName, objectName);
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
@@ -331,32 +352,37 @@ public abstract class AbstractS3Client implements FileClient {
         if (objectNames == null || objectNames.isEmpty()) {
             return;
         }
+
+        log.debug("opcooc-storage - bucketName: [{}], objectNames: [{}]", bucketName, objectNames);
+
         try {
             List<DeleteObjectsRequest.KeyVersion> objects = objectNames.stream().map(DeleteObjectsRequest.KeyVersion::new).collect(toList());
             DeleteObjectsRequest request = new DeleteObjectsRequest(bucketName).withKeys(objects);
             client.deleteObjects(request);
         } catch (Exception e) {
-            throw new ObjectException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public String getDownloadUrl(String bucketName, String objectName, Date expiration) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}], expiration: [{}]", bucketName, objectName, expiration);
         try {
             URL url = client.generatePresignedUrl(bucketName, objectName, expiration);
             return url.toExternalForm();
         } catch (Exception e) {
-            throw new PresignedException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
     @Override
     public Map<String, String> postUrl(String bucketName, String objectName, Date expiration) {
-        throw new PresignedException("method not implement!");
+        throw new StorageException("method not implement!");
     }
 
     @Override
     public String getUploadUrl(String bucketName, String objectName, Date expiration, boolean specType) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}], expiration: [{}], specType: [{}]", bucketName, objectName, expiration, specType);
         try {
             GeneratePresignedUrlRequest generatePresignedUrlRequest =
                     new GeneratePresignedUrlRequest(bucketName, objectName)
@@ -372,13 +398,20 @@ public abstract class AbstractS3Client implements FileClient {
             URL url = client.generatePresignedUrl(generatePresignedUrlRequest);
             return url.toExternalForm();
         } catch (Exception e) {
-            throw new PresignedException(e.getMessage());
+            throw new StorageException(e);
         }
     }
 
 
     @Override
     public void shutdown() {
-        client.shutdown();
+
+        log.debug("opcooc-storage - shutdown [{}] client", source.name());
+
+        try {
+            client.shutdown();
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
     }
 }
