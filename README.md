@@ -65,12 +65,12 @@ opcooc-storage encapsulates and expands aws s3
             <dependency>
               <groupId>com.opcooc</groupId>
               <artifactId>opcooc-storage-boot-starter</artifactId>
-              <version>1.1.0</version>
+              <version>1.1.1</version>
             </dependency>
         ```
     -   Gradle
         ```groovy
-        compile group: 'com.opcooc', name: 'opcooc-storage-boot-starter', version: '1.1.0'
+        compile group: 'com.opcooc', name: 'opcooc-storage-boot-starter', version: '1.1.1'
         ```
 
 - Add config , add config  information in `application.yml`
