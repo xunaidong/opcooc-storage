@@ -1,4 +1,5 @@
 dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.11.848'
     implementation 'org.apache.tika:tika-core:1.24.1'
-}
+    implementation 'io.minio:minio:7.1.2'
+1}

@@ -16,6 +16,8 @@
  */
 package com.opcooc.storage.exception;
 
+import io.minio.DownloadObjectArgs;
+
 /**
  * @author shenqicheng
  * @since 2020-08-22 10:30

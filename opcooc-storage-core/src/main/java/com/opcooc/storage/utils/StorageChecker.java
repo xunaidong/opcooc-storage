@@ -21,6 +21,8 @@ import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.StorageException;
 
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 /**
  * @author shenqicheng
@@ -28,12 +30,41 @@ import java.util.Objects;
  */
 public class StorageChecker {
 
+    /**
+     * Check compliance with Amazon S3 standards
+     */
+    public static final Predicate<String> CHECK_BUCKET_NAME = name -> Pattern.matches("^[a-z0-9][a-z0-9\\.\\-]+[a-z0-9]$", name);
+
     public static void checkS3Config(StorageProperty config, ClientSource source) {
         if (Objects.isNull(config.getAccessKey()) || Objects.isNull(config.getSecretKey()) ||
                 Objects.isNull(config.getEndPoint()) || Objects.isNull(config.getBucketName())) {
-            throw new StorageException("init storage client [%s] error: incomplete param", source);
+            throw new StorageException("opcooc-storage - init storage client [%s] error: incomplete params", source);
         }
     }
 
+    public static void validateNotNull(Object arg, String argName) {
+        if (arg == null) {
+            throw new StorageException("opcooc-storage - %s must not be null.", argName);
+        }
+    }
+
+    public static void validateNotEmptyString(String arg, String argName) {
+        validateNotNull(arg, argName);
+        if (arg.isEmpty()) {
+            throw new StorageException("opcooc-storage - %s must be a non-empty string.", argName);
+        }
+    }
+
+    public static void validateNullOrNotEmptyString(String arg, String argName) {
+        if (arg != null && arg.isEmpty()) {
+            throw new StorageException("opcooc-storage - %s must be a non-empty string.", argName);
+        }
+    }
+
+    public static void validateNullOrPositive(Number arg, String argName) {
+        if (arg != null && arg.longValue() < 0) {
+            throw new StorageException("opcooc-storage - %s cannot be non-negative.", argName);
+        }
+    }
 
 }

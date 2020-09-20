@@ -38,8 +38,12 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
     private static final String PREFIX = "#";
     private static final StorageClassResolver RESOLVER = new StorageClassResolver();
 
-    @Setter
-    private StorageProcessorManager processorManager;
+    private final StorageProcessorManager processorManager;
+
+    public StorageAnnotationInterceptor(StorageProcessorManager processorManager){
+        this.processorManager = processorManager;
+    }
+
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

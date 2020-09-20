@@ -83,8 +83,7 @@ public class FileClientAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public StorageAnnotationAdvisor dynamicDatasourceAnnotationAdvisor(StorageProcessorManager storageProcessorManager) {
-        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor();
-        interceptor.setProcessorManager(storageProcessorManager);
+        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor(storageProcessorManager);
         StorageAnnotationAdvisor advisor = new StorageAnnotationAdvisor(interceptor);
         advisor.setOrder(properties.getOrder());
         return advisor;
