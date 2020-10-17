@@ -44,6 +44,12 @@ public class SetFolderArgs extends BucketArgs {
             return this;
         }
 
+        @Override
+        protected void validate(SetFolderArgs args) {
+            super.validate(args);
+            validateFolderName(args.folderName);
+        }
+
         private void validateFolderName(String folderName) {
 
             validateNotEmptyString(folderName, "folderName");

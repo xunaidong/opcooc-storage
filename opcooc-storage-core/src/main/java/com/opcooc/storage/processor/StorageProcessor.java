@@ -16,17 +16,13 @@
  */
 package com.opcooc.storage.processor;
 
-import org.aopalliance.intercept.MethodInvocation;
-
 /**
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public interface StorageProcessor {
+public interface StorageProcessor extends Processor {
 
     boolean matches(String key);
-
-    String doDetermineStorage(MethodInvocation invocation, String key);
 
     Integer order();
 }

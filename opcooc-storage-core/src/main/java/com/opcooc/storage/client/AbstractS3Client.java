@@ -22,6 +22,8 @@ import cn.hutool.core.util.StrUtil;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
+import com.opcooc.storage.arguments.CreateBucketArgs;
+import com.opcooc.storage.arguments.SetFolderArgs;
 import com.opcooc.storage.config.ResultConverter;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.*;
@@ -83,12 +85,12 @@ public abstract class AbstractS3Client implements FileClient {
     protected abstract AmazonS3 init(StorageProperty config);
 
     @Override
-    public void createFolder(String bucketName, String path) {
-        log.debug("opcooc-storage - bucketName: [{}], create folder path: [{}]", bucketName, path);
+    public void createFolder(SetFolderArgs args) {
+        log.debug("opcooc-storage - bucketName: [{}], create folder path: [{}]", args.getBucketName(), args.getFolderName());
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(0);
         PutObjectRequest putObjectRequest =
-                new PutObjectRequest(bucketName, StorageUtil.checkFolder(path), new ByteArrayInputStream(new byte[]{}), metadata);
+                new PutObjectRequest(args.getBucketName(), StorageUtil.checkFolder(args.getFolderName()), new ByteArrayInputStream(new byte[]{}), metadata);
         try {
             client.putObject(putObjectRequest);
         } catch (Exception e) {
@@ -103,14 +105,13 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
-    public String createBucket(String bucketName) {
-        if (doesBucketExist(bucketName)) {
-            log.debug("opcooc-storage - exist [{}] bucketNamed ", bucketName);
-            return bucketName;
-        }
-
+    public String createBucket(CreateBucketArgs args) {
         try {
-            Bucket bucket = client.createBucket(bucketName);
+            if (client.doesBucketExistV2(args.getBucketName())) {
+                log.debug("opcooc-storage - exist [{}] bucketNamed ", args.getBucketName());
+                return args.getBucketName();
+            }
+            Bucket bucket = client.createBucket(args.getBucketName());
             log.debug("opcooc-storage - create [{}] bucketName success", bucket.getName());
             return bucket.getName();
         } catch (Exception e) {

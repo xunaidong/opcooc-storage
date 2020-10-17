@@ -63,10 +63,10 @@ public class FileClientAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public StorageClient storageRoutingClientSource(ClientSourceProvider clientSourceProvider) {
-        StorageClient clientSource = new StorageClient();
-        clientSource.setPrimary(properties.getPrimary());
-        clientSource.setClientProvider(clientSourceProvider);
-        return clientSource;
+        StorageClient client = new StorageClient();
+        client.setPrimary(properties.getPrimary());
+        client.setClientProvider(clientSourceProvider);
+        return client;
     }
 
     @Bean

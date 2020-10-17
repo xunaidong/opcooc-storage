@@ -16,6 +16,8 @@
  */
 package com.opcooc.storage.client;
 
+import com.opcooc.storage.arguments.CreateBucketArgs;
+import com.opcooc.storage.arguments.SetFolderArgs;
 import com.opcooc.storage.config.FileBasicInfo;
 import com.opcooc.storage.config.ResultConverter;
 
@@ -45,19 +47,9 @@ public interface FileClient {
     /**
      * 创建文件夹
      *
-     * @param bucketName 存储桶名称
-     * @param path       文件夹名称
+     * @param args 参数
      */
-    void createFolder(String bucketName, String path);
-
-    /**
-     * 创建文件夹
-     *
-     * @param path 文件夹名称
-     */
-    default void createFolder(String path) {
-        createFolder(getBucketName(), path);
-    }
+    void createFolder(SetFolderArgs args);
 
     //--------------------------------------folder end--------------------------------------
 
@@ -73,10 +65,10 @@ public interface FileClient {
     /**
      * 创建存储桶
      *
-     * @param bucketName 存储桶名称
+     * @param args 参数
      * @return 存储桶名称
      */
-    String createBucket(String bucketName);
+    String createBucket(CreateBucketArgs args);
 
     /**
      * 删除存储桶

@@ -22,20 +22,10 @@ import org.aopalliance.intercept.MethodInvocation;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class AutoStorageProcessor implements StorageProcessor{
-
-    @Override
-    public boolean matches(String key) {
-        return false;
-    }
+public class DefaultStorageProcessor implements Processor{
 
     @Override
     public String doDetermineStorage(MethodInvocation invocation, String key) {
         return "";
-    }
-
-    @Override
-    public Integer order() {
-        return Integer.MAX_VALUE;
     }
 }

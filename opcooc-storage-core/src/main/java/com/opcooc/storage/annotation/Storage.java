@@ -16,8 +16,8 @@
  */
 package com.opcooc.storage.annotation;
 
-import com.opcooc.storage.processor.AutoStorageProcessor;
-import com.opcooc.storage.processor.StorageProcessor;
+import com.opcooc.storage.processor.DefaultStorageProcessor;
+import com.opcooc.storage.processor.Processor;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -51,11 +51,11 @@ public @interface Storage {
     String bucket() default "";
 
     /**
-     * processor todo 是否需要分开配置
-     *
+     * processor
+     * todo 是否需要分开配置
      * @return StorageProcessor
      */
-    Class<? extends StorageProcessor> processor() default AutoStorageProcessor.class;
+    Class<? extends Processor> processor() default DefaultStorageProcessor.class;
 
 
 }

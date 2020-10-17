@@ -16,6 +16,8 @@
  */
 package com.opcooc.storage.processor;
 
+import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.support.StorageAttribute;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,8 +37,10 @@ import java.util.List;
 @AllArgsConstructor
 public class StorageProcessorManager implements InitializingBean {
 
+    private static final String PREFIX = "#";
+
     @Getter
-    private List<StorageProcessor> processors = new ArrayList<>(3);
+    private final List<StorageProcessor> processors = new ArrayList<>(3);
 
     public void addProcessor(StorageProcessor processor) {
         this.processors.add(processor);
@@ -44,13 +48,13 @@ public class StorageProcessorManager implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (processors == null || processors.isEmpty()) {
+        if (processors.isEmpty()) {
             throw new IllegalArgumentException("processor list not null");
         }
         processors.sort(Comparator.comparingInt(StorageProcessor::order));
     }
 
-    public String determineStorage(MethodInvocation invocation, String key) {
+    private String getStorageAttr(MethodInvocation invocation, String key) {
         for (StorageProcessor processor : getProcessors()) {
             if (!processor.matches(key)) {
                 continue;
@@ -58,5 +62,34 @@ public class StorageProcessorManager implements InitializingBean {
             return processor.doDetermineStorage(invocation, key);
         }
         return null;
+    }
+
+    private String convertAttribute(MethodInvocation invocation, String attr, Processor processor) {
+        boolean isProcessor = attr != null && attr.startsWith(PREFIX);
+        if (processor != null && isProcessor) {
+            return processor.doDetermineStorage(invocation, attr);
+        }
+        return isProcessor ? getStorageAttr(invocation, attr) : attr;
+    }
+
+    private Processor getStorageProcessor(Class<? extends Processor> processorClazz) {
+        try {
+            return (processorClazz != null && processorClazz != DefaultStorageProcessor.class) ? processorClazz.getDeclaredConstructor().newInstance() : null;
+        } catch (Exception e) {
+            throw new StorageException("can not instance custom processor: [%s]",processorClazz.getName());
+        }
+    }
+
+    public StorageAttribute determineStorage(MethodInvocation invocation, StorageAttribute storage) {
+
+        if (storage == null) {
+            return null;
+        }
+
+        Processor processor = getStorageProcessor(storage.getProcessor());
+        String client = convertAttribute(invocation, storage.getClient(), processor);
+        String bucket = convertAttribute(invocation, storage.getBucket(), processor);
+
+        return StorageAttribute.builder().client(client).bucket(bucket).build();
     }
 }

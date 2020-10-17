@@ -16,14 +16,10 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.exception.StorageException;
-import com.opcooc.storage.processor.AutoStorageProcessor;
-import com.opcooc.storage.processor.StorageProcessor;
 import com.opcooc.storage.processor.StorageProcessorManager;
 import com.opcooc.storage.support.StorageAttribute;
 import com.opcooc.storage.support.StorageClassResolver;
 import com.opcooc.storage.utils.StorageAttributeContextHolder;
-import lombok.Setter;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -35,12 +31,11 @@ import org.aopalliance.intercept.MethodInvocation;
 public class StorageAnnotationInterceptor implements MethodInterceptor {
 
 
-    private static final String PREFIX = "#";
     private static final StorageClassResolver RESOLVER = new StorageClassResolver();
 
     private final StorageProcessorManager processorManager;
 
-    public StorageAnnotationInterceptor(StorageProcessorManager processorManager){
+    public StorageAnnotationInterceptor(StorageProcessorManager processorManager) {
         this.processorManager = processorManager;
     }
 
@@ -57,31 +52,7 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
 
     private StorageAttribute determineStorage(MethodInvocation invocation) {
         StorageAttribute storage = RESOLVER.getStorageKey(invocation.getMethod(), invocation.getThis());
-
-        if (storage == null) {
-            return null;
-        }
-
-        StorageProcessor processor = getStorageProcessor(storage.getProcessor());
-        String client = convertAttribute(invocation, storage.getClient(), processor);
-        String bucket = convertAttribute(invocation, storage.getBucket(), processor);
-
-        return StorageAttribute.builder().client(client).bucket(bucket).build();
+        return processorManager.determineStorage(invocation, storage);
     }
 
-    private String convertAttribute(MethodInvocation invocation, String attr, StorageProcessor processor) {
-        boolean isProcessor = attr != null && attr.startsWith(PREFIX);
-        if (processor != null && isProcessor) {
-            return processor.doDetermineStorage(invocation, attr);
-        }
-        return isProcessor ? processorManager.determineStorage(invocation, attr) : attr;
-    }
-
-    private StorageProcessor getStorageProcessor(Class<? extends StorageProcessor> processorClazz) {
-        try {
-            return (processorClazz != null && processorClazz != AutoStorageProcessor.class) ? processorClazz.getDeclaredConstructor().newInstance() : null;
-        } catch (Exception e) {
-            throw new StorageException("can not instance custom processor: [%s]",processorClazz.getName());
-        }
-    }
 }

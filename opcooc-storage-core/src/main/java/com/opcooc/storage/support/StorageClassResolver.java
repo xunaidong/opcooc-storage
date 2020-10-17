@@ -17,6 +17,7 @@
 package com.opcooc.storage.support;
 
 import com.opcooc.storage.annotation.Storage;
+import com.opcooc.storage.processor.Processor;
 import com.opcooc.storage.processor.StorageProcessor;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodClassKey;
@@ -125,7 +126,7 @@ public class StorageClassResolver {
         }
         String client = attributes.getString("client");
         String bucket = attributes.getString("bucket");
-        Class<? extends StorageProcessor> processor = attributes.getClass("processor");
+        Class<? extends Processor> processor = attributes.getClass("processor");
         return StorageAttribute.builder().client(client).bucket(bucket).processor(processor).build();
     }
 }
