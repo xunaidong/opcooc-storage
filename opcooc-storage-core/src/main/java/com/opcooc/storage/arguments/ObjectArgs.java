@@ -22,12 +22,30 @@ import lombok.Getter;
  * @author shenqicheng
  * @since 2020-09-20 20:20
  */
+import java.io.IOException;
+
 import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
 
 public abstract class ObjectArgs extends BucketArgs {
 
     @Getter
     protected String objectName;
+
+    protected long objectSize;
+
+    protected String contentType;
+
+    public long objectSize() {
+        return objectSize;
+    }
+
+    public String contentType() throws IOException {
+        if (contentType != null) {
+            return contentType;
+        }
+
+        return null;
+    }
 
     public abstract static class Builder<A extends ObjectArgs, B extends Builder<A, B>>
             extends BucketArgs.Builder<A, B> {

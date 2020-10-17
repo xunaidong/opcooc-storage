@@ -17,7 +17,12 @@
 package com.opcooc.storage.client;
 
 import com.opcooc.storage.arguments.CreateBucketArgs;
+import com.opcooc.storage.arguments.DeleteBucketArgs;
+import com.opcooc.storage.arguments.DoesBucketExistArgs;
 import com.opcooc.storage.arguments.SetFolderArgs;
+import com.opcooc.storage.arguments.UploadFileArgs;
+import com.opcooc.storage.arguments.UploadObjectArgs;
+import com.opcooc.storage.arguments.UploadPathArgs;
 import com.opcooc.storage.config.FileBasicInfo;
 import com.opcooc.storage.config.ResultConverter;
 
@@ -73,9 +78,9 @@ public interface FileClient {
     /**
      * 删除存储桶
      *
-     * @param bucketName 存储桶名称
+     * @param args 参数
      */
-    void deleteBucket(String bucketName);
+    void deleteBucket(DeleteBucketArgs args);
 
     /**
      * 获取所有存储桶名称
@@ -87,10 +92,10 @@ public interface FileClient {
     /**
      * 判断桶是否存在
      *
-     * @param bucketName 存储桶名称
+     * @param args 参数
      * @return 是否存在bucket
      */
-    boolean doesBucketExist(String bucketName);
+    boolean doesBucketExist(DoesBucketExistArgs args);
 
     //--------------------------------------bucket method end--------------------------------------
 
@@ -99,65 +104,28 @@ public interface FileClient {
     /**
      * 上传文件到服务器
      *
-     * @param bucketName 存储桶名称
-     * @param objectName 文件完整路径
-     * @param stream     文件流
+     * @param args 参数
      * @return 文件上传后的信息
      */
-    FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream);
+    FileBasicInfo uploadObject(UploadObjectArgs args);
 
     /**
      * 上传文件到服务器
      *
-     * @param objectName 文件完整路径
-     * @param stream     文件流
+     * @param args 参数
      * @return 文件上传后的信息
      */
-    default FileBasicInfo uploadObject(String objectName, InputStream stream) {
-        return uploadObject(getBucketName(), objectName, stream);
-    }
+    FileBasicInfo uploadFile(UploadFileArgs args);
+
 
     /**
      * 上传文件到服务器
      *
-     * @param bucketName 存储桶名称
-     * @param objectName 文件完整路径
-     * @param file       文件
+     * @param args 参数
      * @return 文件上传后的信息
      */
-    FileBasicInfo uploadObject(String bucketName, String objectName, File file);
+    FileBasicInfo uploadPath(UploadPathArgs args);
 
-    /**
-     * 上传文件到服务器
-     *
-     * @param objectName 文件完整路径
-     * @param file       文件
-     * @return 文件上传后的信息
-     */
-    default FileBasicInfo uploadObject(String objectName, File file) {
-        return uploadObject(getBucketName(), objectName, file);
-    }
-
-    /**
-     * 上传文件到服务器
-     *
-     * @param bucketName   存储桶名称
-     * @param objectName   文件完整路径
-     * @param fullFilePath 文件路径
-     * @return 文件上传后的信息
-     */
-    FileBasicInfo uploadObject(String bucketName, String objectName, String fullFilePath);
-
-    /**
-     * 上传文件到服务器
-     *
-     * @param objectName   文件完整路径
-     * @param fullFilePath 文件路径
-     * @return 文件上传后的信息
-     */
-    default FileBasicInfo uploadObject(String objectName, String fullFilePath) {
-        return uploadObject(getBucketName(), objectName, fullFilePath);
-    }
     //--------------------------------------upload file end--------------------------------------
 
     //--------------------------------------copy file start--------------------------------------

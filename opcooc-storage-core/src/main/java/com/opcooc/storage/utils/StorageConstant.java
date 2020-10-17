@@ -37,4 +37,6 @@ public class StorageConstant {
     public static final String NO_SOURCE = "source cannot be null";
 
     public static final String NO_CLIENT = "client get null";
+
+    public static final long MAX_OBJECT_SIZE = 5L * 1024 * 1024 * 1024 * 1024;
 }

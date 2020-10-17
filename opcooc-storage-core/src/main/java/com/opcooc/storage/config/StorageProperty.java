@@ -44,4 +44,6 @@ public class StorageProperty {
     private String domain;
 
     private String basePath;
+
+    private Boolean autoAddBucketName = false;
 }

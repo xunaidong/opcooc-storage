@@ -23,7 +23,12 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.opcooc.storage.arguments.CreateBucketArgs;
+import com.opcooc.storage.arguments.DeleteBucketArgs;
+import com.opcooc.storage.arguments.DoesBucketExistArgs;
 import com.opcooc.storage.arguments.SetFolderArgs;
+import com.opcooc.storage.arguments.UploadFileArgs;
+import com.opcooc.storage.arguments.UploadObjectArgs;
+import com.opcooc.storage.arguments.UploadPathArgs;
 import com.opcooc.storage.config.ResultConverter;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.*;
@@ -35,6 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,8 +106,11 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public String getBucketName() {
-        String bucket = StorageAttributeContextHolder.bucket();
-        return createBucket(StrUtil.isBlank(bucket) ? config.getBucketName() : bucket);
+        String bucketName = config.getBucketName();
+        if(config.getAutoAddBucketName()){
+            return createBucket(CreateBucketArgs.builder().bucket(bucketName).build());
+        }
+        return bucketName;
     }
 
     @Override
@@ -120,13 +129,13 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
-    public void deleteBucket(String bucketName) {
+    public void deleteBucket(DeleteBucketArgs args) {
         try {
-            ObjectListing objectListing = client.listObjects(bucketName);
+            ObjectListing objectListing = client.listObjects(args.getBucketName());
             while (true) {
                 for (S3ObjectSummary s3ObjectSummary : objectListing.getObjectSummaries()) {
-                    client.deleteObject(bucketName, s3ObjectSummary.getKey());
-                    log.debug("opcooc-storage - bucketName: [{}], delete object: [{}] success", bucketName, s3ObjectSummary.getKey());
+                    client.deleteObject(args.getBucketName(), s3ObjectSummary.getKey());
+                    log.debug("opcooc-storage - bucketName: [{}], delete object: [{}] success", args.getBucketName(), s3ObjectSummary.getKey());
                 }
 
                 if (objectListing.isTruncated()) {
@@ -135,7 +144,7 @@ public abstract class AbstractS3Client implements FileClient {
                     break;
                 }
             }
-            client.deleteBucket(bucketName);
+            client.deleteBucket(args.getBucketName());
         } catch (Exception e) {
             throw new StorageException(e);
         }
@@ -155,44 +164,45 @@ public abstract class AbstractS3Client implements FileClient {
     }
 
     @Override
-    public boolean doesBucketExist(String bucketName) {
-        log.debug("opcooc-storage - bucketName: [{}]", bucketName);
+    public boolean doesBucketExist(DoesBucketExistArgs args) {
+        log.debug("opcooc-storage - bucketName: [{}]", args.getBucketName());
         try {
-            return client.doesBucketExistV2(bucketName);
+            return client.doesBucketExistV2(args.getBucketName());
         } catch (Exception e) {
             throw new StorageException(e);
         }
     }
 
     @Override
-    public FileBasicInfo uploadObject(String bucketName, String objectName, InputStream stream) {
-        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
+    public FileBasicInfo uploadObject(UploadObjectArgs args) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", args.getBucketName(), args.getObjectName());
         try {
             ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(stream.available());
-            metadata.setContentType(StorageUtil.TIKA.detect(objectName));
-            client.putObject(bucketName, objectName, stream, metadata);
-            return getObjectMetadata(bucketName, objectName);
+            metadata.setContentLength(args.getStream().available());
+            metadata.setContentType(args.contentType());
+            client.putObject(args.getBucketName(), args.getObjectName(), args.getStream(), metadata);
+            return getObjectMetadata(args.getBucketName(), args.getObjectName());
         } catch (Exception e) {
             throw new StorageException(e);
         }
     }
 
     @Override
-    public FileBasicInfo uploadObject(String bucketName, String objectName, File file) {
-        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", bucketName, objectName);
+    public FileBasicInfo uploadFile(UploadFileArgs args) {
+        log.debug("opcooc-storage - bucketName: [{}], objectName: [{}]", args.getBucketName(), args.getObjectName());
         try {
-            client.putObject(bucketName, objectName, file);
-            return getObjectMetadata(bucketName, objectName);
+            client.putObject(args.getBucketName(), args.getObjectName(), args.getFile());
+            return getObjectMetadata(args.getBucketName(), args.getObjectName());
         } catch (Exception e) {
             throw new StorageException(e);
         }
     }
 
     @Override
-    public FileBasicInfo uploadObject(String bucketName, String objectName, String fullFilePath) {
+    public FileBasicInfo uploadPath(UploadPathArgs args) {
         try {
-            return uploadObject(bucketName, objectName, FileUtil.touch(fullFilePath));
+            client.putObject(args.getBucketName(), args.getObjectName(), FileUtil.touch(args.getFilename()));
+            return getObjectMetadata(args.getBucketName(), args.getObjectName());
         } catch (Exception e) {
             throw new StorageException(e);
         }
