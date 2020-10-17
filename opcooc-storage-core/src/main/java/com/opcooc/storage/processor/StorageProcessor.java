@@ -16,13 +16,62 @@
  */
 package com.opcooc.storage.processor;
 
+import org.aopalliance.intercept.MethodInvocation;
+
 /**
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public interface StorageProcessor extends Processor {
+public abstract class StorageProcessor {
 
-    boolean matches(String key);
+    private StorageProcessor nextProcessor;
 
-    Integer order();
+    public void setNextProcessor(StorageProcessor processor) {
+        this.nextProcessor = processor;
+    }
+
+    /**
+     * 抽象匹配条件 匹配才会走当前执行器否则走下一级执行器
+     *
+     * @param key 注解内容
+     * @return 是否匹配
+     */
+    public abstract boolean matches(String key);
+
+    /**
+     * 决定参数
+     *
+     * <pre>
+     *     调用底层doDetermineParam
+     *     如果返回的是null则继续执行下一个，否则直接返回
+     * </pre>
+     *
+     * @param invocation 方法执行信息
+     * @param key        注解内容
+     * @return 参数
+     */
+    public String determineParam(MethodInvocation invocation, String key) {
+        if (matches(key)) {
+            String param = doDetermineParam(invocation, key);
+            if (param == null && nextProcessor != null) {
+                return nextProcessor.determineParam(invocation, key);
+            }
+            return param;
+        }
+        if (nextProcessor != null) {
+            return nextProcessor.determineParam(invocation, key);
+        }
+        return null;
+    }
+
+    /**
+     * 抽象最终决定参数
+     *
+     * @param invocation 方法执行信息
+     * @param key        注解内容
+     * @return 参数
+     */
+    public abstract String doDetermineParam(MethodInvocation invocation, String key);
+
+
 }

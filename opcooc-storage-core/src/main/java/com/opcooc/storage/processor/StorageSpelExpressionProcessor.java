@@ -30,7 +30,7 @@ import java.lang.reflect.Method;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageSpelExpressionProcessor implements StorageProcessor {
+public class StorageSpelExpressionProcessor extends StorageProcessor {
     /**
      * 参数发现器
      */
@@ -69,7 +69,7 @@ public class StorageSpelExpressionProcessor implements StorageProcessor {
     }
 
     @Override
-    public String doDetermineStorage(MethodInvocation invocation, String key) {
+    public String doDetermineParam(MethodInvocation invocation, String key) {
         Method method = invocation.getMethod();
         Object[] arguments = invocation.getArguments();
         EvaluationContext context = new MethodBasedEvaluationContext(null, method, arguments, NAME_DISCOVERER);
@@ -81,8 +81,4 @@ public class StorageSpelExpressionProcessor implements StorageProcessor {
         this.parserContext = parserContext;
     }
 
-    @Override
-    public Integer order() {
-        return 300;
-    }
 }

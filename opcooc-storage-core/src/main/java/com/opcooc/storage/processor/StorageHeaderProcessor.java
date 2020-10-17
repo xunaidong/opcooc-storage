@@ -23,7 +23,7 @@ import org.aopalliance.intercept.MethodInvocation;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageHeaderProcessor implements StorageProcessor {
+public class StorageHeaderProcessor extends StorageProcessor {
     /**
      * header prefix
      */
@@ -35,12 +35,8 @@ public class StorageHeaderProcessor implements StorageProcessor {
     }
 
     @Override
-    public String doDetermineStorage(MethodInvocation invocation, String key) {
+    public String doDetermineParam(MethodInvocation invocation, String key) {
         return StorageUtil.getHttpServletRequest().getHeader(key.substring(8));
     }
 
-    @Override
-    public Integer order() {
-        return 100;
-    }
 }

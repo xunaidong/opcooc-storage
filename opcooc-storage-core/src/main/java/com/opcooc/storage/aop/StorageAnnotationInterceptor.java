@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.processor.StorageProcessorManager;
+import com.opcooc.storage.support.StorageManager;
 import com.opcooc.storage.support.StorageAttribute;
 import com.opcooc.storage.support.StorageClassResolver;
 import com.opcooc.storage.utils.StorageAttributeContextHolder;
@@ -33,9 +33,9 @@ public class StorageAnnotationInterceptor implements MethodInterceptor {
 
     private static final StorageClassResolver RESOLVER = new StorageClassResolver();
 
-    private final StorageProcessorManager processorManager;
+    private final StorageManager processorManager;
 
-    public StorageAnnotationInterceptor(StorageProcessorManager processorManager) {
+    public StorageAnnotationInterceptor(StorageManager processorManager) {
         this.processorManager = processorManager;
     }
 

@@ -16,8 +16,6 @@
  */
 package com.opcooc.storage.support;
 
-import com.opcooc.storage.processor.Processor;
-import com.opcooc.storage.processor.StorageProcessor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,5 +37,4 @@ public class StorageAttribute {
 
     private String bucket;
 
-    private Class<? extends Processor> processor;
 }

@@ -20,9 +20,11 @@ package com.opcooc.storage.autoconfigure;
 import com.opcooc.storage.StorageClient;
 import com.opcooc.storage.aop.StorageAnnotationAdvisor;
 import com.opcooc.storage.aop.StorageAnnotationInterceptor;
+import com.opcooc.storage.client.FileClient;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.processor.StorageHeaderProcessor;
-import com.opcooc.storage.processor.StorageProcessorManager;
+import com.opcooc.storage.processor.StorageProcessor;
+import com.opcooc.storage.support.StorageManager;
 import com.opcooc.storage.processor.StorageSessionProcessor;
 import com.opcooc.storage.processor.StorageSpelExpressionProcessor;
 import com.opcooc.storage.provider.ClientSourceProvider;
@@ -62,28 +64,36 @@ public class FileClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public StorageClient storageRoutingClientSource(ClientSourceProvider clientSourceProvider) {
-        StorageClient client = new StorageClient();
-        client.setPrimary(properties.getPrimary());
-        client.setClientProvider(clientSourceProvider);
-        return client;
+    public StorageClient storageRoutingClientSource(StorageManager storageManager) {
+        return new StorageClient(storageManager);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public StorageProcessorManager storageProcessorManager() {
-        StorageProcessorManager manager = new StorageProcessorManager();
-        manager.addProcessor(new StorageHeaderProcessor());
-        manager.addProcessor(new StorageSessionProcessor());
-        manager.addProcessor(new StorageSpelExpressionProcessor());
+    public StorageManager storageProcessorManager(ClientSourceProvider clientProvider, StorageProcessor storageProcessor) {
+        StorageManager manager = new StorageManager();
+        manager.setPrimary(properties.getPrimary());
+        manager.setClientProvider(clientProvider);
+        manager.setProcessor(storageProcessor);
         return manager;
     }
+    @Bean
+    @ConditionalOnMissingBean
+    public StorageProcessor storageProcessor() {
+        StorageHeaderProcessor headerProcessor = new StorageHeaderProcessor();
+        StorageSessionProcessor sessionProcessor = new StorageSessionProcessor();
+        StorageSpelExpressionProcessor spelExpressionProcessor = new StorageSpelExpressionProcessor();
+        headerProcessor.setNextProcessor(sessionProcessor);
+        sessionProcessor.setNextProcessor(spelExpressionProcessor);
+        return headerProcessor;
+    }
+
 
     @Role(value = BeanDefinition.ROLE_INFRASTRUCTURE)
     @Bean
     @ConditionalOnMissingBean
-    public StorageAnnotationAdvisor dynamicDatasourceAnnotationAdvisor(StorageProcessorManager storageProcessorManager) {
-        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor(storageProcessorManager);
+    public StorageAnnotationAdvisor dynamicDatasourceAnnotationAdvisor(StorageManager storageManager) {
+        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor(storageManager);
         StorageAnnotationAdvisor advisor = new StorageAnnotationAdvisor(interceptor);
         advisor.setOrder(properties.getOrder());
         return advisor;

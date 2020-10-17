@@ -18,16 +18,12 @@ package com.opcooc.storage.processor;
 
 import com.opcooc.storage.utils.StorageUtil;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageSessionProcessor implements StorageProcessor {
+public class StorageSessionProcessor extends StorageProcessor {
     /**
      * session开头
      */
@@ -39,12 +35,8 @@ public class StorageSessionProcessor implements StorageProcessor {
     }
 
     @Override
-    public String doDetermineStorage(MethodInvocation invocation, String key) {
+    public String doDetermineParam(MethodInvocation invocation, String key) {
         return StorageUtil.getHttpServletRequest().getSession().getAttribute(key.substring(9)).toString();
     }
 
-    @Override
-    public Integer order() {
-        return 200;
-    }
 }

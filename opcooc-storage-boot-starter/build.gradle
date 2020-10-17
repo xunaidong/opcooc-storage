@@ -1,5 +1,5 @@
 dependencies {
-    api project(":opcooc-storage")
+    api project(":opcooc-storage-core")
     implementation platform("org.springframework.boot:spring-boot-dependencies:2.3.3.RELEASE")
 
     api 'org.springframework.boot:spring-boot-autoconfigure:2.3.3.RELEASE'
