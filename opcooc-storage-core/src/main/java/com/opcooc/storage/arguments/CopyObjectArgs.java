@@ -26,6 +26,9 @@ import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
  */
 public class CopyObjectArgs extends ObjectArgs {
 
+    /**
+     * 需要被复制的文件
+     */
     @Getter
     private CopySource source;
 

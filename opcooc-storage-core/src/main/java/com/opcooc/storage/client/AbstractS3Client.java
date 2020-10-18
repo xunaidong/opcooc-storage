@@ -196,7 +196,6 @@ public abstract class AbstractS3Client implements FileClient {
 
     @Override
     public void copyObject(CopyObjectArgs args) {
-        // todo  逻辑有点问题
         CopySource source = args.getSource();
         log.debug("opcooc-storage - sourceBucketName: [{}], sourceKey: [{}], destinationBucketName: [{}], destinationKey: [{}] copy success",
                 source.getBucketName(), source.getObjectName(), args.getBucketName(), args.getObjectName());
@@ -315,7 +314,7 @@ public abstract class AbstractS3Client implements FileClient {
                 throw new StorageException(ERROR_MESSAGE, args.getBucketName(), args.getObjectName());
             }
             GetObjectToFileArgs toFileArgs = GetObjectToFileArgs.builder()
-                    .bucket(args.getBucketName()).object(args.getObjectName()).File(FileUtil.touch(args.getPath())).build();
+                    .bucket(args.getBucketName()).object(args.getObjectName()).file(FileUtil.touch(args.getPath())).build();
             geObjectToFile(toFileArgs);
             return args.getPath();
         } catch (Exception e) {

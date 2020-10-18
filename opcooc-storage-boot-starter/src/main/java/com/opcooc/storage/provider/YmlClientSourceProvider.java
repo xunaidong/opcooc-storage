@@ -39,7 +39,7 @@ public class YmlClientSourceProvider extends AbstractClientSourceProvider {
 
     @Override
     public Map<String, FileClient> loadClientSources() {
-        // todo 是否需要区分先后顺序
+        // 用户自定优于内置配置
         Map<String, FileClient> map = createClientMap(storagePropertiesMap);
         map.putAll(createExtendClientMap(extendStoragePropertiesMap));
         return map;

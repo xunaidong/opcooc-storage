@@ -16,6 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
+import com.opcooc.storage.exception.StorageException;
 import lombok.Getter;
 
 import java.io.File;
@@ -37,11 +38,23 @@ public class GetObjectToFileArgs extends ObjectArgs {
 
     public static final class Builder extends ObjectArgs.Builder<GetObjectToFileArgs, Builder> {
 
-        // todo 需要验证file是否正确
-        public Builder File(File file) {
-            validateNotNull(file, "file");
+        public Builder file(File file) {
+            validateFile(file);
             operations.add(args -> args.file = file);
             return this;
+        }
+
+        @Override
+        protected void validate(GetObjectToFileArgs args) {
+            super.validate(args);
+            validateFile(args.file);
+        }
+
+        private void validateFile(File file) {
+            validateNotNull(file, "file");
+            if (!file.exists()) {
+                throw new StorageException("opcooc-storage - [%s] the file does not exist", file);
+            }
         }
     }
 }

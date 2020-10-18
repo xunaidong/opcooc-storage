@@ -16,9 +16,14 @@
  */
 package com.opcooc.storage.arguments;
 
+import com.opcooc.storage.exception.StorageException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
 import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
 
 /**
@@ -38,7 +43,7 @@ public class GetObjectToPathArgs extends ObjectArgs {
     public static final class Builder extends ObjectArgs.Builder<GetObjectToPathArgs, Builder> {
 
         public Builder path(String path) {
-            validateNotNull(path, "path");
+            validatePath(path);
             operations.add(args -> args.path = path);
             return this;
         }
@@ -50,8 +55,16 @@ public class GetObjectToPathArgs extends ObjectArgs {
             validatePath(args.path);
         }
 
-        public void validatePath(String path){
-            // todo 需要验证filePath是否正确
+        public void validatePath(String path) {
+            validateNotEmptyString(path, "filename");
+
+            if (!Files.exists(Paths.get(path))) {
+                throw new StorageException("opcooc-storage - [%s] the file does not exist", path);
+            }
+
+            if (!Files.isRegularFile(Paths.get(path))) {
+                throw new StorageException("opcooc-storage - [%s] not a regular file", path);
+            }
         }
 
     }

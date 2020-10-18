@@ -71,7 +71,7 @@ public class GetPresignedObjectUrlArgs extends ObjectArgs {
         }
 
         public Builder expiry(long duration, TimeUnit unit) {
-            return expiry(unit.toSeconds(duration));
+            return expiry(unit.toMillis(duration));
         }
 
         private void validateExpiry(long expiry) {

@@ -61,7 +61,7 @@ public class UploadPathArgs extends ObjectArgs {
 
             validateNotEmptyString(filename, "filename");
 
-            if (Files.exists(Paths.get(filename))) {
+            if (!Files.exists(Paths.get(filename))) {
                 throw new StorageException("opcooc-storage - [%s] the file does not exist", filename);
             }
 

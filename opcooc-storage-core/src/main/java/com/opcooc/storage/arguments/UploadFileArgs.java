@@ -57,14 +57,10 @@ public class UploadFileArgs extends ObjectArgs {
         }
 
         private void validateFile(File file) {
-
             validateNotNull(file, "file");
-
-
             if (!file.exists()) {
                 throw new StorageException("opcooc-storage - [%s] the file does not exist", file);
             }
-
         }
     }
 }
