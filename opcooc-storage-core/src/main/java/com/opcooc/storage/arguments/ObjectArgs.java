@@ -17,6 +17,7 @@
 package com.opcooc.storage.arguments;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author shenqicheng
@@ -26,6 +27,7 @@ import java.io.IOException;
 
 import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
 
+@Slf4j
 public abstract class ObjectArgs extends BucketArgs {
 
     @Getter
@@ -59,6 +61,7 @@ public abstract class ObjectArgs extends BucketArgs {
 
         @Override
         protected void validate(A args) {
+            log.debug("opcooc-storage - ObjectArgs, objectName: [{}]", args.objectName);
             super.validate(args);
             validateObjectName(args.objectName);
         }

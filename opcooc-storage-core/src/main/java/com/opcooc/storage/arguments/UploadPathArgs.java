@@ -19,6 +19,7 @@ package com.opcooc.storage.arguments;
 import com.opcooc.storage.exception.StorageException;
 import com.opcooc.storage.utils.StorageConstant;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +31,7 @@ import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
  * @author shenqicheng
  * @since 2020-09-20 20:20
  */
+@Slf4j
 public class UploadPathArgs extends ObjectArgs {
 
     @Getter
@@ -50,6 +52,7 @@ public class UploadPathArgs extends ObjectArgs {
 
         @Override
         protected void validate(UploadPathArgs args) {
+            log.debug("opcooc-storage - UploadPathArgs, filename: [{}]", args.filename);
             super.validate(args);
             validateFilename(args.filename);
         }

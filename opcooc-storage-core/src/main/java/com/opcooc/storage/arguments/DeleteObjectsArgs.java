@@ -17,32 +17,41 @@
 package com.opcooc.storage.arguments;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Collection;
+import java.util.LinkedList;
+
+import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
 
 /**
  * @author shenqicheng
- * @since 2020-09-20 20:20
+ * @since 2020-10-18 15:00
  */
-import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
-
-public class SetBucketPolicyArgs extends BucketArgs {
+@Slf4j
+public class DeleteObjectsArgs extends ObjectArgs {
 
     @Getter
-    private String config;
+    private Collection<String> objects = new LinkedList<>();
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static final class Builder extends BucketArgs.Builder<SetBucketPolicyArgs, Builder> {
+    public static final class Builder extends ObjectArgs.Builder<DeleteObjectsArgs, Builder> {
 
-        public Builder folderName(String config) {
-            validateConfig(config);
-            operations.add(args -> args.config = config);
+        public Builder objects(Collection<String> objects) {
+            validateNotNull(objects, "objects");
+            operations.add(args -> args.objects = objects);
             return this;
         }
 
-        private void validateConfig(String config) {
-            validateNotNull(config, "policy config");
+        @Override
+        protected void validate(DeleteObjectsArgs args) {
+            log.debug("opcooc-storage - DeleteObjectsArgs, objects: [{}]", args.objects);
+            super.validate(args);
+            validateNotNull(args.objects, "objects");
         }
+
     }
 }

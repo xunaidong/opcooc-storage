@@ -18,6 +18,7 @@ package com.opcooc.storage.arguments;
 
 import com.opcooc.storage.exception.StorageException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
 
@@ -25,6 +26,7 @@ import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
  * @author shenqicheng
  * @since 2020-09-20 20:20
  */
+@Slf4j
 public class SetFolderArgs extends BucketArgs {
 
     private static final String SYMBOL = "/";
@@ -47,6 +49,7 @@ public class SetFolderArgs extends BucketArgs {
         @Override
         protected void validate(SetFolderArgs args) {
             super.validate(args);
+            log.debug("opcooc-storage - SetFolderArgs, folderName: [{}]", args.folderName);
             validateFolderName(args.folderName);
         }
 

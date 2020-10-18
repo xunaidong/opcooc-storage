@@ -16,21 +16,13 @@
  */
 package com.opcooc.storage.client;
 
-import com.opcooc.storage.arguments.CreateBucketArgs;
-import com.opcooc.storage.arguments.DeleteBucketArgs;
-import com.opcooc.storage.arguments.DoesBucketExistArgs;
-import com.opcooc.storage.arguments.SetFolderArgs;
-import com.opcooc.storage.arguments.UploadFileArgs;
-import com.opcooc.storage.arguments.UploadObjectArgs;
-import com.opcooc.storage.arguments.UploadPathArgs;
+import com.opcooc.storage.arguments.*;
 import com.opcooc.storage.config.FileBasicInfo;
 import com.opcooc.storage.config.ResultConverter;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author shenqicheng
@@ -133,33 +125,9 @@ public interface FileClient {
     /**
      * 复制文件
      *
-     * @param bucketName    源存储桶名称
-     * @param objectName    源文件完整路径
-     * @param srcBucketName 目标存储桶名称
-     * @param srcObjectName 目标文件完整路径
+     * @param args 参数
      */
-    void copyObject(String bucketName, String objectName, String srcBucketName, String srcObjectName);
-
-    /**
-     * 复制文件
-     *
-     * @param objectName    源文件完整路径
-     * @param srcBucketName 目标存储桶名称
-     * @param srcObjectName 目标文件完整路径
-     */
-    default void copyObject(String objectName, String srcBucketName, String srcObjectName) {
-        copyObject(getBucketName(), objectName, srcBucketName, srcObjectName);
-    }
-
-    /**
-     * 复制文件
-     *
-     * @param objectName    源文件完整路径
-     * @param srcObjectName 目标文件完整路径
-     */
-    default void copyObject(String objectName, String srcObjectName) {
-        copyObject(objectName, getBucketName(), srcObjectName);
-    }
+    void copyObject(CopyObjectArgs args);
 
     //--------------------------------------copy file end--------------------------------------
 
@@ -168,109 +136,48 @@ public interface FileClient {
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
      *
-     * @param bucketName 存储桶名称
-     * @param prefix     指定前缀
-     * @param recursive  是否递归
+     * @param args 参数
      * @return 文件信息集合
      */
-    List<FileBasicInfo> listObjects(String bucketName, String prefix, boolean recursive);
+    List<FileBasicInfo> listObjects(ListObjectsArgs args);
+
 
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
      *
-     * @param prefix    指定前缀
-     * @param recursive 是否递归
-     * @return 文件信息集合
-     */
-    default List<FileBasicInfo> listObjects(String prefix, boolean recursive) {
-        return listObjects(getBucketName(), prefix, recursive);
-    }
-
-    /**
-     * 获取指定存储桶名称 指定前缀 的下级所有文件
-     *
-     * @param bucketName      存储桶名称
-     * @param prefix          指定前缀
-     * @param recursive       是否递归
+     * @param args            参数
      * @param resultConverter 文件信息转换器
      * @param <T>             泛型
      * @return 文件信息集合
      */
-    <T> List<T> listObjects(String bucketName, String prefix, boolean recursive, ResultConverter<T> resultConverter);
-
-    /**
-     * 获取指定存储桶名称 指定前缀 的下级所有文件
-     *
-     * @param prefix          指定前缀
-     * @param recursive       是否递归
-     * @param resultConverter 文件信息转换器
-     * @param <T>             泛型
-     * @return 文件信息集合
-     */
-    default <T> List<T> listObjects(String prefix, boolean recursive, ResultConverter<T> resultConverter) {
-        return listObjects(getBucketName(), prefix, recursive, resultConverter);
-    }
+    <T> List<T> listObjects(ListObjectsArgs args, ResultConverter<T> resultConverter);
 
     /**
      * 获取对象元数据
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
+     * @param args 参数
      * @return 文件信息
      */
-    FileBasicInfo getObjectMetadata(String bucketName, String objectName);
+    FileBasicInfo getObjectMetadata(ObjectMetadataArgs args);
 
     /**
      * 获取对象元数据
      *
-     * @param objectName 文件完整路径
-     * @return 文件信息
-     */
-    default FileBasicInfo getObjectMetadata(String objectName) {
-        return getObjectMetadata(getBucketName(), objectName);
-    }
-
-    /**
-     * 获取对象元数据
-     *
-     * @param bucketName      储桶名称
-     * @param objectName      文件完整路径
+     * @param args            参数
      * @param resultConverter 文件信息转换器
      * @param <T>             泛型
      * @return 文件信息
      */
-    <T> T getObjectMetadata(String bucketName, String objectName, ResultConverter<T> resultConverter);
-
-    /**
-     * 获取对象元数据
-     *
-     * @param objectName      文件完整路径
-     * @param resultConverter 文件信息转换器
-     * @param <T>             泛型
-     * @return 文件信息
-     */
-    default <T> T getObjectMetadata(String objectName, ResultConverter<T> resultConverter) {
-        return getObjectMetadata(getBucketName(), objectName, resultConverter);
-    }
+    <T> T getObjectMetadata(ObjectMetadataArgs args, ResultConverter<T> resultConverter);
 
     /**
      * 判断对象是否存在
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
+     * @param args 参数
      * @return 结果
      */
-    boolean objectExist(String bucketName, String objectName);
+    boolean objectExist(DoesObjectExistArgs args);
 
-    /**
-     * 判断对象是否存在
-     *
-     * @param objectName 文件完整路径
-     * @return 结果
-     */
-    default boolean objectExist(String objectName) {
-        return objectExist(getBucketName(), objectName);
-    }
     //--------------------------------------get file Metadata end--------------------------------------
 
     //--------------------------------------get file object start--------------------------------------
@@ -278,82 +185,35 @@ public interface FileClient {
     /**
      * 获得文件 InputStream
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
+     * @param args 参数
      * @return InputStream
      */
-    InputStream getStreamObject(String bucketName, String objectName);
-
-    /**
-     * 获得文件 InputStream
-     *
-     * @param objectName 文件完整路径
-     * @return InputStream
-     */
-    default InputStream getStreamObject(String objectName) {
-        return getStreamObject(getBucketName(), objectName);
-    }
+    InputStream getObjectToStream(GetObjectToStreamArgs args);
 
     /**
      * 获得文件
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param file       文件
+     * @param args 参数
      * @return 文件
      */
-    File getFileObject(String bucketName, String objectName, File file);
+    File geObjectToFile(GetObjectToFileArgs args);
 
     /**
      * 获得文件
      *
-     * @param objectName 文件完整路径
-     * @param file       文件
-     * @return 文件
-     */
-    default File getFileObject(String objectName, File file) {
-        return getFileObject(getBucketName(), objectName, file);
-    }
-
-    /**
-     * 获得文件
-     *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param filePath   文件path
+     * @param args 参数
      * @return 文件path
      */
-    String getFilePathObject(String bucketName, String objectName, String filePath);
-
-    /**
-     * 获得文件
-     *
-     * @param objectName 文件完整路径
-     * @param filePath   文件path
-     * @return 文件path
-     */
-    default String getFilePathObject(String objectName, String filePath) {
-        return getFilePathObject(getBucketName(), objectName, filePath);
-    }
+    String getObjectToPath(GetObjectToPathArgs args);
 
     /**
      * 获得文件 byte[]
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
+     * @param args 参数
      * @return byte
      */
-    byte[] getByteObject(String bucketName, String objectName);
+    byte[] getObjectToBytes(GetObjectToBytesArgs args);
 
-    /**
-     * 获得文件 byte[]
-     *
-     * @param objectName 文件完整路径
-     * @return byte
-     */
-    default byte[] getByteObject(String objectName) {
-        return getByteObject(getBucketName(), objectName);
-    }
     //--------------------------------------get file object end--------------------------------------
 
     //--------------------------------------delete file start--------------------------------------
@@ -361,165 +221,30 @@ public interface FileClient {
     /**
      * 删除单个文件
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
+     * @param args 参数
      */
-    void deleteObject(String bucketName, String objectName);
+    void deleteObject(DeleteObjectArgs args);
 
-    /**
-     * 删除单个文件
-     *
-     * @param objectName 文件完整路径
-     */
-    default void deleteObject(String objectName) {
-        deleteObject(getBucketName(), objectName);
-    }
 
     /**
      * 删除文件集合
      *
-     * @param bucketName  储桶名称
-     * @param objectNames 文件完整路径集合
+     * @param args 参数
      */
-    void deleteObjects(String bucketName, List<String> objectNames);
+    void deleteObjects(DeleteObjectsArgs args);
 
-    /**
-     * 删除文件集合
-     *
-     * @param objectNames 文件完整路径集合
-     */
-    default void deleteObjects(List<String> objectNames) {
-        deleteObjects(getBucketName(), objectNames);
-    }
     //--------------------------------------delete file end--------------------------------------
 
-    //--------------------------------------get download url start--------------------------------------
+    //--------------------------------------get generate presigned url start--------------------------------------
 
     /**
      * 生成签名的URL，以使用get的HTTP方法访问文件
      *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
+     * @param args 参数
      * @return 签名url
      */
-    String getDownloadUrl(String bucketName, String objectName, Date expiration);
+    String generatePresignedUrl(GetPresignedObjectUrlArgs args);
 
-    /**
-     * 生成签名的URL，以使用get的HTTP方法访问文件
-     *
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @return 签名url
-     */
-    default String getDownloadUrl(String objectName, Date expiration) {
-        return getDownloadUrl(getBucketName(), objectName, expiration);
-    }
-
-    /**
-     * 生成签名的URL，以使用get的HTTP方法访问文件(默认为5分钟)
-     *
-     * @param objectName 文件完整路径
-     * @return 签名url
-     */
-    default String getDownloadUrl(String objectName) {
-        Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return getDownloadUrl(objectName, expiration);
-    }
-
-    //--------------------------------------get download url start--------------------------------------
-
-    //--------------------------------------get upload signature url start--------------------------------------
-
-
-    /**
-     * 生成签名的URL，以使用post的HTTP方法访问
-     *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @return post body 信息
-     */
-    Map<String, String> postUrl(String bucketName, String objectName, Date expiration);
-
-    /**
-     * 生成签名的URL，以使用post的HTTP方法访问
-     *
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @return post body 信息
-     */
-    default Map<String, String> postUrl(String objectName, Date expiration) {
-        return postUrl(getBucketName(), objectName, expiration);
-    }
-
-    /**
-     * 生成签名的URL，以使用post的HTTP方法访问(默认为5分钟)
-     *
-     * @param objectName 文件完整路径
-     * @return post body 信息
-     */
-    default Map<String, String> postUrl(String objectName) {
-        Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return postUrl(objectName, expiration);
-    }
-
-    /**
-     * 生成签名的URL，以使用特put的HTTP方法访问
-     *
-     * @param bucketName 储桶名称
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @param specType   是否添加文件类型验证
-     * @return 生成签名的URL
-     */
-    String getUploadUrl(String bucketName, String objectName, Date expiration, boolean specType);
-
-    /**
-     * 生成签名的URL，以使用特put的HTTP方法访问
-     *
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @return 生成签名的URL
-     */
-    default String getUploadUrl(String objectName, Date expiration) {
-        return getUploadUrl(getBucketName(), objectName, expiration, false);
-    }
-
-    /**
-     * 生成签名的URL，以使用特put的HTTP方法访问(默认为5分钟)
-     *
-     * @param objectName 文件完整路径
-     * @return 生成签名的URL
-     */
-    default String getUploadUrl(String objectName) {
-        Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return getUploadUrl(objectName, expiration);
-    }
-
-    /**
-     * 生成签名的URL，以使用特put的HTTP方法访问
-     *
-     * @param objectName 文件完整路径
-     * @param expiration 过期时间
-     * @param specType   是否添加文件类型验证
-     * @return 生成签名的URL
-     */
-    default String getUploadUrl(String objectName, Date expiration, boolean specType) {
-        return getUploadUrl(getBucketName(), objectName, expiration, specType);
-    }
-
-    /**
-     * 生成签名的URL，以使用特put的HTTP方法访问(默认为5分钟)
-     *
-     * @param objectName 文件完整路径
-     * @param specType   是否添加文件类型验证
-     * @return 生成签名的URL
-     */
-    default String getUploadUrl(String objectName, boolean specType) {
-        Date expiration = new Date(System.currentTimeMillis() + 5 * 60 * 1000);
-        return getUploadUrl(objectName, expiration, specType);
-    }
-    //--------------------------------------get upload signature url end--------------------------------------
+    //--------------------------------------get generate presigned url start--------------------------------------
 
 }
