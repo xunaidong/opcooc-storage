@@ -24,13 +24,20 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+
 import java.lang.reflect.Method;
 
 /**
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageSpelExpressionProcessor extends StorageProcessor {
+public class StorageSpelExpressionProcessor implements StorageProcessor {
+
+    /**
+     * SpelExpression开头
+     */
+    public static final String SPEL_PREFIX = "#spel:";
+
     /**
      * 参数发现器
      */
@@ -64,12 +71,13 @@ public class StorageSpelExpressionProcessor extends StorageProcessor {
     };
 
     @Override
-    public boolean matches(String key) {
-        return true;
+    public String getProcessorType() {
+        return SPEL_PREFIX;
     }
 
     @Override
-    public String doDetermineParam(MethodInvocation invocation, String key) {
+    public String determineParam(MethodInvocation invocation, String key) {
+        key = key == null ? key : key.replaceFirst(SPEL_PREFIX, "");
         Method method = invocation.getMethod();
         Object[] arguments = invocation.getArguments();
         EvaluationContext context = new MethodBasedEvaluationContext(null, method, arguments, NAME_DISCOVERER);

@@ -1,5 +1,5 @@
-/*
- * Copyright © 2020-2020 organization opcooc
+/**
+ * Copyright © 2018 organization baomidou
  * <pre>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,43 +16,44 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.support.StorageManager;
+import com.opcooc.storage.processor.StorageProcessorHolder;
 import com.opcooc.storage.support.StorageAttribute;
 import com.opcooc.storage.support.StorageClassResolver;
-import com.opcooc.storage.utils.StorageAttributeContextHolder;
+import com.opcooc.storage.utils.DynamicStorageContextHolder;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
-
 /**
+ * Core Interceptor of Dynamic Datasource
+ *
  * @author shenqicheng
- * @since 2020-09-02 13:01
+ * @since 1.2.0
+ * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class StorageAnnotationInterceptor implements MethodInterceptor {
+public class DynamicStorageAnnotationInterceptor implements MethodInterceptor {
 
+    private final StorageClassResolver storageClassResolver;
+    private final StorageProcessorHolder processorHolder;
 
-    private static final StorageClassResolver RESOLVER = new StorageClassResolver();
-
-    private final StorageManager processorManager;
-
-    public StorageAnnotationInterceptor(StorageManager processorManager) {
-        this.processorManager = processorManager;
+    public DynamicStorageAnnotationInterceptor(Boolean allowedPublicOnly, StorageProcessorHolder processorHolder) {
+        storageClassResolver = new StorageClassResolver(allowedPublicOnly);
+        this.processorHolder = processorHolder;
     }
-
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {
-            StorageAttributeContextHolder.push(determineStorage(invocation));
+            StorageAttribute storageAttribute = determineStorage(invocation);
+            DynamicStorageContextHolder.push(storageAttribute);
             return invocation.proceed();
         } finally {
-            StorageAttributeContextHolder.poll();
+            DynamicStorageContextHolder.poll();
         }
     }
 
     private StorageAttribute determineStorage(MethodInvocation invocation) {
-        StorageAttribute storage = RESOLVER.getStorageKey(invocation.getMethod(), invocation.getThis());
-        return processorManager.determineStorage(invocation, storage);
+        StorageAttribute storage = storageClassResolver.findStorageKey(invocation.getMethod(), invocation.getThis());
+        return processorHolder.determineStorage(invocation, storage);
     }
 
 }

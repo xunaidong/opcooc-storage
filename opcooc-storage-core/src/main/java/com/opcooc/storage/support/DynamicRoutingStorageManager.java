@@ -42,7 +42,7 @@ import java.util.Map;
  * @since 2020-09-02 13:01
  */
 @Slf4j
-public class StorageManager {
+public class DynamicRoutingStorageManager {
 
     private static final String PREFIX = "#";
 

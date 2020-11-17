@@ -17,7 +17,7 @@
 package com.opcooc.storage.arguments;
 
 import com.opcooc.storage.exception.StorageException;
-import com.opcooc.storage.utils.StorageAttributeContextHolder;
+import com.opcooc.storage.utils.DynamicStorageContextHolder;
 import lombok.Getter;
 
 import static com.opcooc.storage.utils.StorageChecker.CHECK_BUCKET_NAME;
@@ -75,7 +75,7 @@ public abstract class BucketArgs extends BaseArgs {
 
         @SuppressWarnings("unchecked")
         public B bucket(String name) {
-            String bucketName = name == null ? StorageAttributeContextHolder.bucket() : name;
+            String bucketName = name == null ? DynamicStorageContextHolder.bucket() : name;
             validateBucketName(bucketName);
             operations.add(args -> args.bucketName = bucketName);
             return (B) this;

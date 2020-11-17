@@ -18,15 +18,11 @@ package com.opcooc.storage.autoconfigure;
 
 
 import com.opcooc.storage.StorageClient;
-import com.opcooc.storage.aop.StorageAnnotationAdvisor;
-import com.opcooc.storage.aop.StorageAnnotationInterceptor;
-import com.opcooc.storage.client.FileClient;
+import com.opcooc.storage.aop.DynamicStorageAnnotationAdvisor;
+import com.opcooc.storage.aop.DynamicStorageAnnotationInterceptor;
 import com.opcooc.storage.config.StorageProperty;
-import com.opcooc.storage.processor.StorageHeaderProcessor;
-import com.opcooc.storage.processor.StorageProcessor;
-import com.opcooc.storage.support.StorageManager;
-import com.opcooc.storage.processor.StorageSessionProcessor;
-import com.opcooc.storage.processor.StorageSpelExpressionProcessor;
+import com.opcooc.storage.processor.*;
+import com.opcooc.storage.support.DynamicRoutingStorageManager;
 import com.opcooc.storage.provider.ClientSourceProvider;
 import com.opcooc.storage.provider.YmlClientSourceProvider;
 import lombok.AllArgsConstructor;
@@ -64,14 +60,14 @@ public class FileClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public StorageClient storageRoutingClientSource(StorageManager storageManager) {
-        return new StorageClient(storageManager);
+    public StorageClient storageRoutingClientSource(DynamicRoutingStorageManager dynamicRoutingStorageManager) {
+        return new StorageClient(dynamicRoutingStorageManager);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public StorageManager storageProcessorManager(ClientSourceProvider clientProvider, StorageProcessor storageProcessor) {
-        StorageManager manager = new StorageManager();
+    public DynamicRoutingStorageManager dynamicRoutingStorageManager(ClientSourceProvider clientProvider, StorageProcessor storageProcessor) {
+        DynamicRoutingStorageManager manager = new DynamicRoutingStorageManager();
         manager.setPrimary(properties.getPrimary());
         manager.setClientProvider(clientProvider);
         manager.setProcessor(storageProcessor);
@@ -79,22 +75,22 @@ public class FileClientAutoConfiguration {
     }
     @Bean
     @ConditionalOnMissingBean
-    public StorageProcessor storageProcessor() {
-        StorageHeaderProcessor headerProcessor = new StorageHeaderProcessor();
-        StorageSessionProcessor sessionProcessor = new StorageSessionProcessor();
-        StorageSpelExpressionProcessor spelExpressionProcessor = new StorageSpelExpressionProcessor();
-        headerProcessor.setNextProcessor(sessionProcessor);
-        sessionProcessor.setNextProcessor(spelExpressionProcessor);
-        return headerProcessor;
+    public StorageProcessorHolder storageProcessorHolder(DynamicRoutingStorageManager dynamicRoutingStorageManager) {
+//        StorageHeaderProcessor headerProcessor = new StorageHeaderProcessor();
+//        StorageSessionProcessor sessionProcessor = new StorageSessionProcessor();
+//        StorageSpelExpressionProcessor spelExpressionProcessor = new StorageSpelExpressionProcessor();
+//        headerProcessor.setNextProcessor(sessionProcessor);
+//        sessionProcessor.setNextProcessor(spelExpressionProcessor);
+        return new StorageProcessorHolder(dynamicRoutingStorageManager);
     }
 
 
     @Role(value = BeanDefinition.ROLE_INFRASTRUCTURE)
     @Bean
     @ConditionalOnMissingBean
-    public StorageAnnotationAdvisor dynamicDatasourceAnnotationAdvisor(StorageManager storageManager) {
-        StorageAnnotationInterceptor interceptor = new StorageAnnotationInterceptor(storageManager);
-        StorageAnnotationAdvisor advisor = new StorageAnnotationAdvisor(interceptor);
+    public DynamicStorageAnnotationAdvisor dynamicStorageAnnotationAdvisor(StorageProcessorHolder processorHolder) {
+        DynamicStorageAnnotationInterceptor interceptor = new DynamicStorageAnnotationInterceptor(properties.isAllowedPublicOnly(), processorHolder);
+        DynamicStorageAnnotationAdvisor advisor = new DynamicStorageAnnotationAdvisor(interceptor);
         advisor.setOrder(properties.getOrder());
         return advisor;
     }

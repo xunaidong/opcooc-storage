@@ -31,85 +31,113 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 存储源解析器
+ *
  * @author shenqicheng
- * @since 2020-09-02 13:01
+ * @since 2.3.0
+ * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
 public class StorageClassResolver {
 
     /**
-     * 缓存方法对应的存储信息
+     * 缓存方法对应的数据源
      */
-    private final Map<Object, StorageAttribute> storageCache = new ConcurrentHashMap<>();
+    private final Map<Object, StorageAttribute> cache = new ConcurrentHashMap<>();
+    private final boolean allowedPublicOnly;
 
+    /**
+     * 加入扩展, 给外部一个修改aop条件的机会
+     *
+     * @param allowedPublicOnly 只允许公共的方法, 默认为true
+     */
+    public StorageClassResolver(boolean allowedPublicOnly) {
+        this.allowedPublicOnly = allowedPublicOnly;
+    }
 
-    public StorageAttribute getStorageKey(Method method, Object targetObject) {
-
+    /**
+     * 从缓存获取数据
+     *
+     * @param method       方法
+     * @param targetObject 目标对象
+     * @return storage
+     */
+    public StorageAttribute findStorageKey(Method method, Object targetObject) {
         if (method.getDeclaringClass() == Object.class) {
-            return null;
+            return StorageAttribute.DEFAULT;
         }
-
-        Object cacheKey = getCacheKey(method, targetObject.getClass());
-        StorageAttribute storageAttr = this.storageCache.get(cacheKey);
-        if (storageAttr == null) {
-            storageAttr = computeStorage(method, targetObject);
-            if (storageAttr == null) {
-                return null;
+        Object cacheKey = new MethodClassKey(method, targetObject.getClass());
+        StorageAttribute storage = this.cache.get(cacheKey);
+        if (storage == null) {
+            storage = computeStorage(method, targetObject);
+            if (storage == null) {
+                storage = StorageAttribute.DEFAULT;
             }
-            this.storageCache.put(cacheKey, storageAttr);
+            this.cache.put(cacheKey, storage);
         }
-
-        return storageAttr;
+        return storage;
     }
 
-    protected Object getCacheKey(Method method, Class<?> clazz) {
-        return new MethodClassKey(method, clazz);
-    }
-
+    /**
+     * 查找注解的顺序
+     * 1. 当前方法
+     * 2. 桥接方法
+     * 3. 当前类开始一直找到Object
+     *
+     * @param method       方法
+     * @param targetObject 目标对象
+     * @return storage
+     */
     private StorageAttribute computeStorage(Method method, Object targetObject) {
-        if (!Modifier.isPublic(method.getModifiers())) {
+        if (allowedPublicOnly && !Modifier.isPublic(method.getModifiers())) {
             return null;
         }
         Class<?> targetClass = targetObject.getClass();
-        // JDK代理时,  获取实现类的方法声明.  method: 接口的方法, specificMethod: 实现类方法
         Class<?> userClass = ClassUtils.getUserClass(targetClass);
+        // JDK代理时,  获取实现类的方法声明.  method: 接口的方法, specificMethod: 实现类方法
         Method specificMethod = ClassUtils.getMostSpecificMethod(method, userClass);
+
         specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
         // 从当前方法查找
-        StorageAttribute storageAttr = findStorageAttribute(specificMethod);
-        if (storageAttr != null) {
-            return storageAttr;
+        StorageAttribute attribute = findStorageAttribute(specificMethod);
+        if (attribute != null) {
+            return attribute;
         }
         // 从当前方法声明的类查找
-        storageAttr = findStorageAttribute(specificMethod.getDeclaringClass());
-        if (storageAttr != null && ClassUtils.isUserLevelMethod(method)) {
-            return storageAttr;
+        attribute = findStorageAttribute(specificMethod.getDeclaringClass());
+        if (attribute != null && ClassUtils.isUserLevelMethod(method)) {
+            return attribute;
         }
         // 如果存在桥接方法
         if (specificMethod != method) {
             // 从桥接方法查找
-            storageAttr = findStorageAttribute(method);
-            if (storageAttr != null) {
-                return storageAttr;
+            attribute = findStorageAttribute(method);
+            if (attribute != null) {
+                return attribute;
             }
             // 从桥接方法声明的类查找
-            storageAttr = findStorageAttribute(method.getDeclaringClass());
-            if (storageAttr != null && ClassUtils.isUserLevelMethod(method)) {
-                return storageAttr;
+            attribute = findStorageAttribute(method.getDeclaringClass());
+            if (attribute != null && ClassUtils.isUserLevelMethod(method)) {
+                return attribute;
             }
         }
-
         return getDefaultStorageAttr(targetObject);
     }
 
-    protected StorageAttribute getDefaultStorageAttr(Object targetObject) {
+    /**
+     * 默认的获取数据源名称方式
+     *
+     * @param targetObject 目标对象
+     * @return storage
+     */
+    private StorageAttribute getDefaultStorageAttr(Object targetObject) {
         Class<?> targetClass = targetObject.getClass();
         // 如果不是代理类, 从当前类开始, 不断的找父类的声明
         if (!Proxy.isProxyClass(targetClass)) {
             Class<?> currentClass = targetClass;
             while (currentClass != Object.class) {
-                StorageAttribute storageAttr = findStorageAttribute(currentClass);
-                if (storageAttr != null) {
-                    return storageAttr;
+                StorageAttribute attribute = findStorageAttribute(currentClass);
+                if (attribute != null) {
+                    return attribute;
                 }
                 currentClass = currentClass.getSuperclass();
             }
@@ -117,17 +145,22 @@ public class StorageClassResolver {
         return null;
     }
 
+    /**
+     * 通过 AnnotatedElement 查找标记的注解, 映射为  StorageHolder
+     *
+     * @param ae AnnotatedElement
+     * @return 数据源映射持有者
+     */
     private StorageAttribute findStorageAttribute(AnnotatedElement ae) {
         AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, Storage.class);
-        if (attributes == null) {
-            return null;
+        if (attributes != null) {
+            String client = attributes.getString("client");
+            String bucket = attributes.getString("bucket");
+            return StorageAttribute.builder()
+                    .client(client)
+                    .bucket(bucket)
+                    .build();
         }
-        String client = attributes.getString("client");
-        String bucket = attributes.getString("bucket");
-        return StorageAttribute.builder()
-                .client(client)
-                .bucket(bucket)
-                .build();
-
+        return null;
     }
 }

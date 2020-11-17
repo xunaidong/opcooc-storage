@@ -23,19 +23,19 @@ import org.aopalliance.intercept.MethodInvocation;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageHeaderProcessor extends StorageProcessor {
+public class StorageHeaderProcessor implements StorageProcessor {
     /**
      * header prefix
      */
-    private static final String HEADER_PREFIX = "#header";
+    public static final String HEADER_PREFIX = "#header:";
 
     @Override
-    public boolean matches(String key) {
-        return key.startsWith(HEADER_PREFIX);
+    public String getProcessorType() {
+        return HEADER_PREFIX;
     }
 
     @Override
-    public String doDetermineParam(MethodInvocation invocation, String key) {
+    public String determineParam(MethodInvocation invocation, String key) {
         return StorageUtil.getHttpServletRequest().getHeader(key.substring(8));
     }
 

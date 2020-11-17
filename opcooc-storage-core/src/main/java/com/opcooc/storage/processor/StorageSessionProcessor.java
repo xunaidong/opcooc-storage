@@ -23,19 +23,19 @@ import org.aopalliance.intercept.MethodInvocation;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public class StorageSessionProcessor extends StorageProcessor {
+public class StorageSessionProcessor implements StorageProcessor {
     /**
      * session开头
      */
-    private static final String SESSION_PREFIX = "#session";
+    public static final String SESSION_PREFIX = "#session:";
 
     @Override
-    public boolean matches(String key) {
-        return key.startsWith(SESSION_PREFIX);
+    public String getProcessorType() {
+        return SESSION_PREFIX;
     }
 
     @Override
-    public String doDetermineParam(MethodInvocation invocation, String key) {
+    public String determineParam(MethodInvocation invocation, String key) {
         return StorageUtil.getHttpServletRequest().getSession().getAttribute(key.substring(9)).toString();
     }
 

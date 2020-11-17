@@ -19,16 +19,12 @@ package com.opcooc.storage;
 import cn.hutool.core.util.StrUtil;
 import com.opcooc.storage.client.FileClient;
 import com.opcooc.storage.exception.StorageException;
-import com.opcooc.storage.provider.ClientSourceProvider;
-import com.opcooc.storage.support.StorageManager;
-import com.opcooc.storage.utils.StorageAttributeContextHolder;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+import com.opcooc.storage.support.DynamicRoutingStorageManager;
+import com.opcooc.storage.utils.DynamicStorageContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -38,14 +34,14 @@ import java.util.Map;
 @Slf4j
 public class StorageClient implements InitializingBean, DisposableBean {
 
-    private final StorageManager storageManager;
+    private final DynamicRoutingStorageManager storageManager;
 
-    public StorageClient(StorageManager storageManager) {
-        this.storageManager = storageManager;
+    public StorageClient(DynamicRoutingStorageManager dynamicRoutingStorageManager) {
+        this.storageManager = dynamicRoutingStorageManager;
     }
 
     public FileClient op() {
-        return getClient(StorageAttributeContextHolder.client());
+        return getClient(DynamicStorageContextHolder.client());
     }
 
     public Map<String, FileClient> getCurrentClients() {

@@ -63,6 +63,11 @@ public class FileClientProperties {
      */
     private Integer order = Ordered.HIGHEST_PRECEDENCE;
 
+    /**
+     * aop 切面是否只允许切 public 方法
+     */
+    private boolean allowedPublicOnly = true;
+
     @Getter
     @Setter
     public static class ExtendRequestProperty extends StorageProperty {

@@ -27,7 +27,7 @@ import java.util.Deque;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public final class StorageAttributeContextHolder {
+public final class DynamicStorageContextHolder {
 
     /**
      * 为什么要用链表存储(准确的是栈)
@@ -44,7 +44,7 @@ public final class StorageAttributeContextHolder {
         }
     };
 
-    private StorageAttributeContextHolder() {
+    private DynamicStorageContextHolder() {
     }
 
     /**
