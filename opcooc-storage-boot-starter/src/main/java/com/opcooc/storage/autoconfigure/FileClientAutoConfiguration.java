@@ -18,8 +18,8 @@ package com.opcooc.storage.autoconfigure;
 
 
 import com.opcooc.storage.StorageClient;
-import com.opcooc.storage.aop.DynamicStorageAnnotationAdvisor;
-import com.opcooc.storage.aop.DynamicStorageAnnotationInterceptor;
+import com.opcooc.storage.aop.DynamicStorageClientAnnotationAdvisor;
+import com.opcooc.storage.aop.DynamicStorageClientAnnotationInterceptor;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.processor.*;
 import com.opcooc.storage.support.DynamicRoutingStorageManager;
@@ -73,24 +73,25 @@ public class FileClientAutoConfiguration {
         manager.setProcessor(storageProcessor);
         return manager;
     }
+
     @Bean
     @ConditionalOnMissingBean
-    public StorageProcessorHolder storageProcessorHolder(DynamicRoutingStorageManager dynamicRoutingStorageManager) {
-//        StorageHeaderProcessor headerProcessor = new StorageHeaderProcessor();
-//        StorageSessionProcessor sessionProcessor = new StorageSessionProcessor();
-//        StorageSpelExpressionProcessor spelExpressionProcessor = new StorageSpelExpressionProcessor();
-//        headerProcessor.setNextProcessor(sessionProcessor);
-//        sessionProcessor.setNextProcessor(spelExpressionProcessor);
-        return new StorageProcessorHolder(dynamicRoutingStorageManager);
+    public ScProcessor dsProcessor() {
+        ScHeaderProcessor headerProcessor = new ScHeaderProcessor();
+        ScSessionProcessor sessionProcessor = new ScSessionProcessor();
+        ScSpelExpressionProcessor spelExpressionProcessor = new ScSpelExpressionProcessor();
+        headerProcessor.setNextProcessor(sessionProcessor);
+        sessionProcessor.setNextProcessor(spelExpressionProcessor);
+        return headerProcessor;
     }
 
 
     @Role(value = BeanDefinition.ROLE_INFRASTRUCTURE)
     @Bean
     @ConditionalOnMissingBean
-    public DynamicStorageAnnotationAdvisor dynamicStorageAnnotationAdvisor(StorageProcessorHolder processorHolder) {
-        DynamicStorageAnnotationInterceptor interceptor = new DynamicStorageAnnotationInterceptor(properties.isAllowedPublicOnly(), processorHolder);
-        DynamicStorageAnnotationAdvisor advisor = new DynamicStorageAnnotationAdvisor(interceptor);
+    public DynamicStorageClientAnnotationAdvisor dynamicStorageAnnotationAdvisor(ScProcessor scProcessor) {
+        DynamicStorageClientAnnotationInterceptor interceptor = new DynamicStorageClientAnnotationInterceptor(properties.isAllowedPublicOnly(), scProcessor);
+        DynamicStorageClientAnnotationAdvisor advisor = new DynamicStorageClientAnnotationAdvisor(interceptor);
         advisor.setOrder(properties.getOrder());
         return advisor;
     }

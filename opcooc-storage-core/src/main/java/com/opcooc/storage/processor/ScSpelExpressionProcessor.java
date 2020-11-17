@@ -1,5 +1,5 @@
-/*
- * Copyright © 2020-2020 organization opcooc
+/**
+ * Copyright © 2018 organization baomidou
  * <pre>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,14 +29,9 @@ import java.lang.reflect.Method;
 
 /**
  * @author shenqicheng
- * @since 2020-09-02 13:01
+ * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class StorageSpelExpressionProcessor implements StorageProcessor {
-
-    /**
-     * SpelExpression开头
-     */
-    public static final String SPEL_PREFIX = "#spel:";
+public class ScSpelExpressionProcessor extends ScProcessor {
 
     /**
      * 参数发现器
@@ -47,7 +42,7 @@ public class StorageSpelExpressionProcessor implements StorageProcessor {
      */
     private static final ExpressionParser PARSER = new SpelExpressionParser();
     /**
-     * 解析上下文的模板 5.0 后 parseExpression(key， null) 可传空
+     * 解析上下文的模板
      * 对于默认不设置的情况下,从参数中取值的方式 #param1
      * 设置指定模板 ParserContext.TEMPLATE_EXPRESSION 后的取值方式: #{#param1}
      * issues: https://github.com/baomidou/dynamic-datasource-spring-boot-starter/issues/199
@@ -71,13 +66,12 @@ public class StorageSpelExpressionProcessor implements StorageProcessor {
     };
 
     @Override
-    public String getProcessorType() {
-        return SPEL_PREFIX;
+    public boolean matches(String key) {
+        return true;
     }
 
     @Override
-    public String determineParam(MethodInvocation invocation, String key) {
-        key = key == null ? key : key.replaceFirst(SPEL_PREFIX, "");
+    public String doDetermineStorageClient(MethodInvocation invocation, String key) {
         Method method = invocation.getMethod();
         Object[] arguments = invocation.getArguments();
         EvaluationContext context = new MethodBasedEvaluationContext(null, method, arguments, NAME_DISCOVERER);
@@ -88,5 +82,4 @@ public class StorageSpelExpressionProcessor implements StorageProcessor {
     public void setParserContext(ParserContext parserContext) {
         this.parserContext = parserContext;
     }
-
 }

@@ -16,8 +16,8 @@
  */
 package com.opcooc.storage.utils;
 
-import com.opcooc.storage.support.StorageAttribute;
 import org.springframework.core.NamedThreadLocal;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -27,7 +27,7 @@ import java.util.Deque;
  * @author shenqicheng
  * @since 2020-09-02 13:01
  */
-public final class DynamicStorageContextHolder {
+public final class DynamicStorageClientContextHolder {
 
     /**
      * 为什么要用链表存储(准确的是栈)
@@ -37,14 +37,14 @@ public final class DynamicStorageContextHolder {
      * 传统的只设置当前线程的方式不能满足此业务需求，必须使用栈，后进先出。
      * </pre>
      */
-    private static final ThreadLocal<Deque<StorageAttribute>> LOOKUP_KEY_HOLDER = new NamedThreadLocal<Deque<StorageAttribute>>("opcooc-storage") {
+    private static final ThreadLocal<Deque<String>> LOOKUP_KEY_HOLDER = new NamedThreadLocal<Deque<String>>("opcooc-storage-client") {
         @Override
-        protected Deque<StorageAttribute> initialValue() {
+        protected Deque<String> initialValue() {
             return new ArrayDeque<>();
         }
     };
 
-    private DynamicStorageContextHolder() {
+    private DynamicStorageClientContextHolder() {
     }
 
     /**
@@ -52,28 +52,8 @@ public final class DynamicStorageContextHolder {
      *
      * @return 存储配置名称
      */
-    public static StorageAttribute peek() {
+    public static String peek() {
         return LOOKUP_KEY_HOLDER.get().peek();
-    }
-
-    /**
-     * 获得当前线程Client配置
-     *
-     * @return Client配置名称
-     */
-    public static String client() {
-        StorageAttribute attr = peek();
-        return attr == null ? null : attr.getClient();
-    }
-
-    /**
-     * 获得当前线程Bucket配置
-     *
-     * @return Bucket配置名称
-     */
-    public static String bucket() {
-        StorageAttribute attr = peek();
-        return attr == null ? null : attr.getBucket();
     }
 
     /**
@@ -82,10 +62,10 @@ public final class DynamicStorageContextHolder {
      * 如非必要不要手动调用，调用后确保最终清除
      * </p>
      *
-     * @param attr 存储配置名称
+     * @param sc 存储配置名称
      */
-    public static void push(StorageAttribute attr) {
-        LOOKUP_KEY_HOLDER.get().push(attr == null ? StorageAttribute.DEFAULT : attr);
+    public static void push(String sc) {
+        LOOKUP_KEY_HOLDER.get().push(StringUtils.isEmpty(sc) ? "" : sc);
     }
 
     /**
@@ -95,7 +75,7 @@ public final class DynamicStorageContextHolder {
      * </p>
      */
     public static void poll() {
-        Deque<StorageAttribute> deque = LOOKUP_KEY_HOLDER.get();
+        Deque<String> deque = LOOKUP_KEY_HOLDER.get();
         deque.poll();
         if (deque.isEmpty()) {
             LOOKUP_KEY_HOLDER.remove();

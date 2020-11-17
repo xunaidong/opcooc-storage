@@ -16,10 +16,9 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.processor.StorageProcessorHolder;
-import com.opcooc.storage.support.StorageAttribute;
+import com.opcooc.storage.processor.ScProcessor;
 import com.opcooc.storage.support.StorageClassResolver;
-import com.opcooc.storage.utils.DynamicStorageContextHolder;
+import com.opcooc.storage.utils.DynamicStorageClientContextHolder;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
@@ -30,30 +29,35 @@ import org.aopalliance.intercept.MethodInvocation;
  * @since 1.2.0
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class DynamicStorageAnnotationInterceptor implements MethodInterceptor {
+public class DynamicStorageClientAnnotationInterceptor implements MethodInterceptor {
+
+    /**
+     * The identification of SPEL.
+     */
+    private static final String DYNAMIC_PREFIX = "#";
 
     private final StorageClassResolver storageClassResolver;
-    private final StorageProcessorHolder processorHolder;
+    private final ScProcessor scProcessor;
 
-    public DynamicStorageAnnotationInterceptor(Boolean allowedPublicOnly, StorageProcessorHolder processorHolder) {
+    public DynamicStorageClientAnnotationInterceptor(Boolean allowedPublicOnly, ScProcessor scProcessor) {
         storageClassResolver = new StorageClassResolver(allowedPublicOnly);
-        this.processorHolder = processorHolder;
+        this.scProcessor = scProcessor;
     }
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {
-            StorageAttribute storageAttribute = determineStorage(invocation);
-            DynamicStorageContextHolder.push(storageAttribute);
+            String scKey = determineStorageClientKey(invocation);
+            DynamicStorageClientContextHolder.push(scKey);
             return invocation.proceed();
         } finally {
-            DynamicStorageContextHolder.poll();
+            DynamicStorageClientContextHolder.poll();
         }
     }
 
-    private StorageAttribute determineStorage(MethodInvocation invocation) {
-        StorageAttribute storage = storageClassResolver.findStorageKey(invocation.getMethod(), invocation.getThis());
-        return processorHolder.determineStorage(invocation, storage);
+    private String determineStorageClientKey(MethodInvocation invocation) {
+        String key = storageClassResolver.findScKey(invocation.getMethod(), invocation.getThis());
+        return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? scProcessor.determineStorageClient(invocation, key) : key;
     }
 
 }

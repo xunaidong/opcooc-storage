@@ -1,5 +1,5 @@
-/*
- * Copyright © 2020-2020 organization opcooc
+/**
+ * Copyright © 2018 organization baomidou
  * <pre>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,31 @@
  */
 package com.opcooc.storage.processor;
 
-import com.opcooc.storage.utils.StorageUtil;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author shenqicheng
- * @since 2020-09-02 13:01
+ * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class StorageHeaderProcessor implements StorageProcessor {
+public class ScHeaderProcessor extends ScProcessor {
+
     /**
      * header prefix
      */
-    public static final String HEADER_PREFIX = "#header:";
+    private static final String HEADER_PREFIX = "#header";
 
     @Override
-    public String getProcessorType() {
-        return HEADER_PREFIX;
+    public boolean matches(String key) {
+        return key.startsWith(HEADER_PREFIX);
     }
 
     @Override
-    public String determineParam(MethodInvocation invocation, String key) {
-        return StorageUtil.getHttpServletRequest().getHeader(key.substring(8));
+    public String doDetermineStorageClient(MethodInvocation invocation, String key) {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        return request.getHeader(key.substring(8));
     }
-
 }

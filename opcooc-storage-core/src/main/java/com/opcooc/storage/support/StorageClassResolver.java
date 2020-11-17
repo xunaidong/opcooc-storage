@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.support;
 
-import com.opcooc.storage.annotation.Storage;
+import com.opcooc.storage.annotation.SC;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodClassKey;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -34,7 +34,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 存储源解析器
  *
  * @author shenqicheng
- * @since 2.3.0
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
 public class StorageClassResolver {
@@ -42,7 +41,7 @@ public class StorageClassResolver {
     /**
      * 缓存方法对应的数据源
      */
-    private final Map<Object, StorageAttribute> cache = new ConcurrentHashMap<>();
+    private final Map<Object, String> cache = new ConcurrentHashMap<>();
     private final boolean allowedPublicOnly;
 
     /**
@@ -61,16 +60,16 @@ public class StorageClassResolver {
      * @param targetObject 目标对象
      * @return storage
      */
-    public StorageAttribute findStorageKey(Method method, Object targetObject) {
+    public String findScKey(Method method, Object targetObject) {
         if (method.getDeclaringClass() == Object.class) {
-            return StorageAttribute.DEFAULT;
+            return "";
         }
         Object cacheKey = new MethodClassKey(method, targetObject.getClass());
-        StorageAttribute storage = this.cache.get(cacheKey);
+        String storage = this.cache.get(cacheKey);
         if (storage == null) {
             storage = computeStorage(method, targetObject);
             if (storage == null) {
-                storage = StorageAttribute.DEFAULT;
+                storage = "";
             }
             this.cache.put(cacheKey, storage);
         }
@@ -87,7 +86,7 @@ public class StorageClassResolver {
      * @param targetObject 目标对象
      * @return storage
      */
-    private StorageAttribute computeStorage(Method method, Object targetObject) {
+    private String computeStorage(Method method, Object targetObject) {
         if (allowedPublicOnly && !Modifier.isPublic(method.getModifiers())) {
             return null;
         }
@@ -98,24 +97,24 @@ public class StorageClassResolver {
 
         specificMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
         // 从当前方法查找
-        StorageAttribute attribute = findStorageAttribute(specificMethod);
+        String attribute = findString(specificMethod);
         if (attribute != null) {
             return attribute;
         }
         // 从当前方法声明的类查找
-        attribute = findStorageAttribute(specificMethod.getDeclaringClass());
+        attribute = findString(specificMethod.getDeclaringClass());
         if (attribute != null && ClassUtils.isUserLevelMethod(method)) {
             return attribute;
         }
         // 如果存在桥接方法
         if (specificMethod != method) {
             // 从桥接方法查找
-            attribute = findStorageAttribute(method);
+            attribute = findString(method);
             if (attribute != null) {
                 return attribute;
             }
             // 从桥接方法声明的类查找
-            attribute = findStorageAttribute(method.getDeclaringClass());
+            attribute = findString(method.getDeclaringClass());
             if (attribute != null && ClassUtils.isUserLevelMethod(method)) {
                 return attribute;
             }
@@ -129,13 +128,13 @@ public class StorageClassResolver {
      * @param targetObject 目标对象
      * @return storage
      */
-    private StorageAttribute getDefaultStorageAttr(Object targetObject) {
+    private String getDefaultStorageAttr(Object targetObject) {
         Class<?> targetClass = targetObject.getClass();
         // 如果不是代理类, 从当前类开始, 不断的找父类的声明
         if (!Proxy.isProxyClass(targetClass)) {
             Class<?> currentClass = targetClass;
             while (currentClass != Object.class) {
-                StorageAttribute attribute = findStorageAttribute(currentClass);
+                String attribute = findString(currentClass);
                 if (attribute != null) {
                     return attribute;
                 }
@@ -151,15 +150,10 @@ public class StorageClassResolver {
      * @param ae AnnotatedElement
      * @return 数据源映射持有者
      */
-    private StorageAttribute findStorageAttribute(AnnotatedElement ae) {
-        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, Storage.class);
+    private String findString(AnnotatedElement ae) {
+        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, SC.class);
         if (attributes != null) {
-            String client = attributes.getString("client");
-            String bucket = attributes.getString("bucket");
-            return StorageAttribute.builder()
-                    .client(client)
-                    .bucket(bucket)
-                    .build();
+            return attributes.getString("value");
         }
         return null;
     }

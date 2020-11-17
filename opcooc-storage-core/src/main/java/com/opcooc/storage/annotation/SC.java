@@ -14,27 +14,30 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.support;
+package com.opcooc.storage.annotation;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
+ * 切换 storage client 的注解
+ *
  * @author shenqicheng
- * @since 2020-09-02 13:01
+ * @since 2020-08-30 10:30
  */
-@Getter
-@Setter
-@Builder
-@ToString
-public class StorageAttribute {
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface SC {
 
-    public static final StorageAttribute DEFAULT = StorageAttribute.builder().build();
-
-    private String client;
-
-    private String bucket;
+    /**
+     * client name
+     *
+     * @return The name of the client to be switch
+     */
+    String value();
 
 }
