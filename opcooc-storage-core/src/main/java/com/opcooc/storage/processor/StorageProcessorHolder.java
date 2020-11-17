@@ -53,25 +53,25 @@ public class StorageProcessorHolder implements InitializingBean {
         processors.put(key, processor);
     }
 
-    public StorageProcessor findStorageProcessor(String type) {
+    private StorageProcessor findStorageProcessor(String type) {
         type = StrUtil.subBetween(type, DYNAMIC_FIRST_PREFIX, DYNAMIC_LAST_PREFIX);
 
         StorageProcessor processor = this.processors.get(type.toLowerCase());
         if (processor == null) {
             return this.processors.get(defaultProcessorType);
         }
+
         return processor;
     }
 
-
-    private String determineParam(MethodInvocation invocation, String attr) {
+    public String determineParam(MethodInvocation invocation, String attr) {
         //判断参数是否按照规定格式
-        (attr != null && attr.startsWith(DYNAMIC_FIRST_PREFIX)) ? dsProcessor.determineDatasource(invocation, key) : attr;
-        return isProcessor ? processor.determineParam(invocation, attr) : attr;
+        if ((attr != null && attr.startsWith(DYNAMIC_FIRST_PREFIX))) {
+            StorageProcessor processor = findStorageProcessor(attr);
+            return processor.determineParam(invocation, attr);
+        }
+        return attr;
     }
-
-
-    private String
 
 
     public StorageAttribute determineStorage(MethodInvocation invocation, StorageAttribute storage) {
