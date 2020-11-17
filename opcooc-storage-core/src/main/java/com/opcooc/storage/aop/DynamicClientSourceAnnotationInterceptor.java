@@ -16,8 +16,8 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.processor.ScProcessor;
-import com.opcooc.storage.support.StorageClassResolver;
+import com.opcooc.storage.processor.CsProcessor;
+import com.opcooc.storage.support.ClientSourceClassResolver;
 import com.opcooc.storage.utils.DynamicStorageClientContextHolder;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -29,19 +29,19 @@ import org.aopalliance.intercept.MethodInvocation;
  * @since 1.2.0
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class DynamicStorageClientAnnotationInterceptor implements MethodInterceptor {
+public class DynamicClientSourceAnnotationInterceptor implements MethodInterceptor {
 
     /**
      * The identification of SPEL.
      */
     private static final String DYNAMIC_PREFIX = "#";
 
-    private final StorageClassResolver storageClassResolver;
-    private final ScProcessor scProcessor;
+    private final ClientSourceClassResolver clientSourceClassResolver;
+    private final CsProcessor csProcessor;
 
-    public DynamicStorageClientAnnotationInterceptor(Boolean allowedPublicOnly, ScProcessor scProcessor) {
-        storageClassResolver = new StorageClassResolver(allowedPublicOnly);
-        this.scProcessor = scProcessor;
+    public DynamicClientSourceAnnotationInterceptor(Boolean allowedPublicOnly, CsProcessor csProcessor) {
+        clientSourceClassResolver = new ClientSourceClassResolver(allowedPublicOnly);
+        this.csProcessor = csProcessor;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class DynamicStorageClientAnnotationInterceptor implements MethodIntercep
     }
 
     private String determineStorageClientKey(MethodInvocation invocation) {
-        String key = storageClassResolver.findScKey(invocation.getMethod(), invocation.getThis());
-        return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? scProcessor.determineStorageClient(invocation, key) : key;
+        String key = clientSourceClassResolver.findScKey(invocation.getMethod(), invocation.getThis());
+        return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? csProcessor.determineStorageClient(invocation, key) : key;
     }
 
 }

@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.annotation.SC;
+import com.opcooc.storage.annotation.CS;
 import lombok.NonNull;
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.ClassFilter;
@@ -42,14 +42,14 @@ import java.lang.reflect.Proxy;
  * @since 1.2.0
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class DynamicStorageClientAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
+public class DynamicClientSourceAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
 
     private final Advice advice;
 
     private final Pointcut pointcut;
 
-    public DynamicStorageClientAnnotationAdvisor(@NonNull DynamicStorageClientAnnotationInterceptor dynamicStorageClientAnnotationInterceptor) {
-        this.advice = dynamicStorageClientAnnotationInterceptor;
+    public DynamicClientSourceAnnotationAdvisor(@NonNull DynamicClientSourceAnnotationInterceptor dynamicClientSourceAnnotationInterceptor) {
+        this.advice = dynamicClientSourceAnnotationInterceptor;
         this.pointcut = buildPointcut();
     }
 
@@ -71,8 +71,8 @@ public class DynamicStorageClientAnnotationAdvisor extends AbstractPointcutAdvis
     }
 
     private Pointcut buildPointcut() {
-        Pointcut cpc = new AnnotationMatchingPointcut(SC.class, true);
-        Pointcut mpc = new AnnotationMethodPoint(SC.class);
+        Pointcut cpc = new AnnotationMatchingPointcut(CS.class, true);
+        Pointcut mpc = new AnnotationMethodPoint(CS.class);
         return new ComposablePointcut(cpc).union(mpc);
     }
 

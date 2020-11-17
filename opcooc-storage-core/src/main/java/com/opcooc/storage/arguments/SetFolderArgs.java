@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -58,7 +58,7 @@ public class SetFolderArgs extends BucketArgs {
             validateNotEmptyString(folderName, "folderName");
 
             if (!folderName.endsWith(SYMBOL)) {
-                throw new StorageException("opcooc-storage - [%s] folderName must end with '/' ", folderName);
+                throw new ClientSourceException("opcooc-storage - [%s] folderName must end with '/' ", folderName);
             }
         }
     }

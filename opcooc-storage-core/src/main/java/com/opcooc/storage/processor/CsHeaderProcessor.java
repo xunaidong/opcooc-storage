@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author shenqicheng
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class ScHeaderProcessor extends ScProcessor {
+public class CsHeaderProcessor extends CsProcessor {
 
     /**
      * header prefix

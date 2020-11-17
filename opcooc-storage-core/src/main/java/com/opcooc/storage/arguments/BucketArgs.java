@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 import com.opcooc.storage.utils.DynamicStorageContextHolder;
 import lombok.Getter;
 
@@ -55,15 +55,15 @@ public abstract class BucketArgs extends BaseArgs {
             validateNotNull(name, "bucket name");
 
             if (name.length() < MIN_LENGTH || name.length() > MAX_LENGTH) {
-                throw new StorageException(
+                throw new ClientSourceException(
                         "opcooc-storage - [%s] bucket name must be at least 3 and no more than 63 characters long", name);
             }
             if (name.contains(POINTS)) {
-                throw new StorageException("opcooc-storage - [%s] bucket name cannot contain successive periods. For more information refer", name);
+                throw new ClientSourceException("opcooc-storage - [%s] bucket name cannot contain successive periods. For more information refer", name);
             }
 
             if (!CHECK_BUCKET_NAME.test(name)) {
-                throw new StorageException(
+                throw new ClientSourceException(
                         "opcooc-storage - [%s] bucket name does not follow Amazon S3 standards. For more information refer", name);
             }
         }

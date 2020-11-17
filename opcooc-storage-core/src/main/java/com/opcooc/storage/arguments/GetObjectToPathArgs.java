@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
-import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
 
 /**
  * @author shenqicheng
@@ -59,11 +58,11 @@ public class GetObjectToPathArgs extends ObjectArgs {
             validateNotEmptyString(path, "filename");
 
             if (!Files.exists(Paths.get(path))) {
-                throw new StorageException("opcooc-storage - [%s] the file does not exist", path);
+                throw new ClientSourceException("opcooc-storage - [%s] the file does not exist", path);
             }
 
             if (!Files.isRegularFile(Paths.get(path))) {
-                throw new StorageException("opcooc-storage - [%s] not a regular file", path);
+                throw new ClientSourceException("opcooc-storage - [%s] not a regular file", path);
             }
         }
 

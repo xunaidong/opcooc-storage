@@ -14,30 +14,17 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.annotation;
+package com.opcooc.storage.support;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * 切换 storage client 的注解
- *
  * @author shenqicheng
- * @since 2020-08-30 10:30
+ * @since 2020-09-02 13:01
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface SC {
+@Slf4j
+public class DynamicRoutingClientSourceManager {
 
-    /**
-     * client name
-     *
-     * @return The name of the client to be switch
-     */
-    String value();
+
 
 }

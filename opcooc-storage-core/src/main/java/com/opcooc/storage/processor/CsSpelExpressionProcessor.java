@@ -31,7 +31,7 @@ import java.lang.reflect.Method;
  * @author shenqicheng
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class ScSpelExpressionProcessor extends ScProcessor {
+public class CsSpelExpressionProcessor extends CsProcessor {
 
     /**
      * 参数发现器

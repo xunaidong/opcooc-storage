@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 import lombok.Getter;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public class GetObjectToFileArgs extends ObjectArgs {
         private void validateFile(File file) {
             validateNotNull(file, "file");
             if (!file.exists()) {
-                throw new StorageException("opcooc-storage - [%s] the file does not exist", file);
+                throw new ClientSourceException("opcooc-storage - [%s] the file does not exist", file);
             }
         }
     }

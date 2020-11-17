@@ -16,34 +16,32 @@
  */
 package com.opcooc.storage.exception;
 
-import io.minio.DownloadObjectArgs;
-
 /**
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
-public class StorageException extends RuntimeException {
+public class ClientSourceException extends RuntimeException {
 
-    public StorageException() {
+    public ClientSourceException() {
     }
 
-    public StorageException(String message) {
+    public ClientSourceException(String message) {
         super(message);
     }
 
-    public StorageException(Exception e) {
+    public ClientSourceException(Exception e) {
         this("method: [%s] error message: [%s]", e.getClass().getSimpleName(), e.getMessage());
     }
 
-    public StorageException(String format, Object... args) {
+    public ClientSourceException(String format, Object... args) {
         this(String.format(format, args));
     }
 
-    public StorageException(String message, Throwable cause) {
+    public ClientSourceException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public StorageException(String format, Throwable cause, Object... args) {
+    public ClientSourceException(String format, Throwable cause, Object... args) {
         this(String.format(format, args), cause);
     }
 

@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -59,10 +59,10 @@ public abstract class BaseArgs {
                         return (A) constructor.newInstance();
                     }
                 }
-                throw new StorageException("opcooc-storage - %s must have no argument constructor",
+                throw new ClientSourceException("opcooc-storage - %s must have no argument constructor",
                         this.getClass().getEnclosingClass());
             } catch (Exception e) {
-                throw new StorageException(e);
+                throw new ClientSourceException(e);
             }
         }
 

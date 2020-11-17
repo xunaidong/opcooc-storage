@@ -18,7 +18,7 @@ package com.opcooc.storage.utils;
 
 import com.opcooc.storage.config.ClientSource;
 import com.opcooc.storage.config.StorageProperty;
-import com.opcooc.storage.exception.StorageException;
+import com.opcooc.storage.exception.ClientSourceException;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -38,32 +38,32 @@ public class StorageChecker {
     public static void checkS3Config(StorageProperty config, ClientSource source) {
         if (Objects.isNull(config.getAccessKey()) || Objects.isNull(config.getSecretKey()) ||
                 Objects.isNull(config.getEndPoint()) || Objects.isNull(config.getBucketName())) {
-            throw new StorageException("opcooc-storage - init storage client [%s] error: incomplete params", source);
+            throw new ClientSourceException("opcooc-storage - init storage client [%s] error: incomplete params", source);
         }
     }
 
     public static void validateNotNull(Object arg, String argName) {
         if (arg == null) {
-            throw new StorageException("opcooc-storage - %s must not be null.", argName);
+            throw new ClientSourceException("opcooc-storage - %s must not be null.", argName);
         }
     }
 
     public static void validateNotEmptyString(String arg, String argName) {
         validateNotNull(arg, argName);
         if (arg.isEmpty()) {
-            throw new StorageException("opcooc-storage - %s must be a non-empty string.", argName);
+            throw new ClientSourceException("opcooc-storage - %s must be a non-empty string.", argName);
         }
     }
 
     public static void validateNullOrNotEmptyString(String arg, String argName) {
         if (arg != null && arg.isEmpty()) {
-            throw new StorageException("opcooc-storage - %s must be a non-empty string.", argName);
+            throw new ClientSourceException("opcooc-storage - %s must be a non-empty string.", argName);
         }
     }
 
     public static void validateNullOrPositive(Number arg, String argName) {
         if (arg != null && arg.longValue() < 0) {
-            throw new StorageException("opcooc-storage - %s cannot be non-negative.", argName);
+            throw new ClientSourceException("opcooc-storage - %s cannot be non-negative.", argName);
         }
     }
 

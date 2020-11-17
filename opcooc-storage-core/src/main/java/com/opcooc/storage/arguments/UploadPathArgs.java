@@ -16,12 +16,10 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
-import com.opcooc.storage.utils.StorageConstant;
+import com.opcooc.storage.exception.ClientSourceException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -62,11 +60,11 @@ public class UploadPathArgs extends ObjectArgs {
             validateNotEmptyString(filename, "filename");
 
             if (!Files.exists(Paths.get(filename))) {
-                throw new StorageException("opcooc-storage - [%s] the file does not exist", filename);
+                throw new ClientSourceException("opcooc-storage - [%s] the file does not exist", filename);
             }
 
             if (!Files.isRegularFile(Paths.get(filename))) {
-                throw new StorageException("opcooc-storage - [%s] not a regular file", filename);
+                throw new ClientSourceException("opcooc-storage - [%s] not a regular file", filename);
             }
 
         }

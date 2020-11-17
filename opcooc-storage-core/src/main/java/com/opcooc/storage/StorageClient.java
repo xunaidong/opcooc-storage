@@ -17,11 +17,9 @@
 package com.opcooc.storage;
 
 import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.support.DynamicRoutingStorageManager;
+import com.opcooc.storage.support.DynamicRoutingClientSourceManager;
 import com.opcooc.storage.utils.DynamicStorageClientContextHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author shenqicheng
@@ -30,10 +28,10 @@ import org.springframework.beans.factory.InitializingBean;
 @Slf4j
 public class StorageClient {
 
-    private final DynamicRoutingStorageManager storageManager;
+    private final DynamicRoutingClientSourceManager storageManager;
 
-    public StorageClient(DynamicRoutingStorageManager dynamicRoutingStorageManager) {
-        this.storageManager = dynamicRoutingStorageManager;
+    public StorageClient(DynamicRoutingClientSourceManager dynamicRoutingClientSourceManager) {
+        this.storageManager = dynamicRoutingClientSourceManager;
     }
 
     public FileClient op() {

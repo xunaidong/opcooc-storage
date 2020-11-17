@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author shenqicheng
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class ScSessionProcessor extends ScProcessor {
+public class CsSessionProcessor extends CsProcessor {
 
     /**
      * session开头

@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.support;
 
-import com.opcooc.storage.annotation.SC;
+import com.opcooc.storage.annotation.CS;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodClassKey;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author shenqicheng
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public class StorageClassResolver {
+public class ClientSourceClassResolver {
 
     /**
      * 缓存方法对应的数据源
@@ -49,7 +49,7 @@ public class StorageClassResolver {
      *
      * @param allowedPublicOnly 只允许公共的方法, 默认为true
      */
-    public StorageClassResolver(boolean allowedPublicOnly) {
+    public ClientSourceClassResolver(boolean allowedPublicOnly) {
         this.allowedPublicOnly = allowedPublicOnly;
     }
 
@@ -151,7 +151,7 @@ public class StorageClassResolver {
      * @return 数据源映射持有者
      */
     private String findString(AnnotatedElement ae) {
-        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, SC.class);
+        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, CS.class);
         if (attributes != null) {
             return attributes.getString("value");
         }

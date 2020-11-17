@@ -16,16 +16,11 @@
  */
 package com.opcooc.storage.arguments;
 
-import com.opcooc.storage.exception.StorageException;
-import com.opcooc.storage.utils.StorageConstant;
+import com.opcooc.storage.exception.ClientSourceException;
 import lombok.Getter;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
-import static com.opcooc.storage.utils.StorageChecker.validateNotEmptyString;
 import static com.opcooc.storage.utils.StorageChecker.validateNotNull;
 
 /**
@@ -59,7 +54,7 @@ public class UploadFileArgs extends ObjectArgs {
         private void validateFile(File file) {
             validateNotNull(file, "file");
             if (!file.exists()) {
-                throw new StorageException("opcooc-storage - [%s] the file does not exist", file);
+                throw new ClientSourceException("opcooc-storage - [%s] the file does not exist", file);
             }
         }
     }
