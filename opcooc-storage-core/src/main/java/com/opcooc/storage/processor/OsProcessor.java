@@ -22,12 +22,12 @@ import org.aopalliance.intercept.MethodInvocation;
  * @author shenqicheng
  * https://gitee.com/baomidou/dynamic-datasource-spring-boot-starter
  */
-public abstract class CsProcessor {
+public abstract class OsProcessor {
 
-    private CsProcessor nextProcessor;
+    private OsProcessor nextProcessor;
 
-    public void setNextProcessor(CsProcessor csProcessor) {
-        this.nextProcessor = csProcessor;
+    public void setNextProcessor(OsProcessor osProcessor) {
+        this.nextProcessor = osProcessor;
     }
 
     /**

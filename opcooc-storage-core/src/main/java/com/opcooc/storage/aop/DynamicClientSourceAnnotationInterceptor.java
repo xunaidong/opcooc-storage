@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.processor.CsProcessor;
+import com.opcooc.storage.processor.OsProcessor;
 import com.opcooc.storage.support.ClientSourceClassResolver;
 import com.opcooc.storage.utils.DynamicStorageClientContextHolder;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -37,11 +37,11 @@ public class DynamicClientSourceAnnotationInterceptor implements MethodIntercept
     private static final String DYNAMIC_PREFIX = "#";
 
     private final ClientSourceClassResolver clientSourceClassResolver;
-    private final CsProcessor csProcessor;
+    private final OsProcessor osProcessor;
 
-    public DynamicClientSourceAnnotationInterceptor(Boolean allowedPublicOnly, CsProcessor csProcessor) {
+    public DynamicClientSourceAnnotationInterceptor(Boolean allowedPublicOnly, OsProcessor osProcessor) {
         clientSourceClassResolver = new ClientSourceClassResolver(allowedPublicOnly);
-        this.csProcessor = csProcessor;
+        this.osProcessor = osProcessor;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DynamicClientSourceAnnotationInterceptor implements MethodIntercept
 
     private String determineStorageClientKey(MethodInvocation invocation) {
         String key = clientSourceClassResolver.findScKey(invocation.getMethod(), invocation.getThis());
-        return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? csProcessor.determineStorageClient(invocation, key) : key;
+        return (!key.isEmpty() && key.startsWith(DYNAMIC_PREFIX)) ? osProcessor.determineStorageClient(invocation, key) : key;
     }
 
 }

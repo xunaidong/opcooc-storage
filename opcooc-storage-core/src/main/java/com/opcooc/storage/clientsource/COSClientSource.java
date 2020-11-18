@@ -14,7 +14,7 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.client;
+package com.opcooc.storage.clientsource;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -22,38 +22,61 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.opcooc.storage.config.ClientSource;
+import com.opcooc.storage.client.Client;
+import com.opcooc.storage.client.S3Client;
+import com.opcooc.storage.config.ClientType;
 import com.opcooc.storage.config.StorageProperty;
+import com.opcooc.storage.exception.ClientSourceException;
+import com.opcooc.storage.utils.StorageChecker;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
 @Slf4j
-public class COSClient extends AbstractS3Client {
+public class COSClientSource implements ClientSource, Closeable {
 
-    public COSClient(StorageProperty config) {
-        super(config, ClientSource.COS);
+    private final StorageProperty config;
+    private Client client;
+
+    public COSClientSource(StorageProperty storageProperty) {
+        // 校验配置合法性
+        StorageChecker.checkS3Config(storageProperty, ClientType.S3);
+        this.config = storageProperty;
+
     }
-
-    @Override
-    public AmazonS3 init(StorageProperty config) {
+    public void init() throws ClientSourceException {
 
         AWSCredentials credentials = new BasicAWSCredentials(config.getAccessKey(), config.getSecretKey());
 
-        AmazonS3 client = AmazonS3ClientBuilder
+        AmazonS3 amazonS3 = AmazonS3ClientBuilder
                 .standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
                         config.getEndPoint(),
-                        source.name()))
+                        ClientType.COS.name()))
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
+        log.debug("init storage client [{}] ok", ClientType.COS.name());
+        this.client = new S3Client(amazonS3);
+    }
 
-        log.debug("init storage client [{}] ok", source.name());
-
+    @Override
+    public Client getClient() throws ClientSourceException {
         return client;
     }
 
+    @Override
+    public void close() throws IOException {
+        log.debug("opcooc-storage - shutdown [{}] client", ClientType.COS.name());
+        try {
+            client.shutdown();
+        } catch (Exception e) {
+            throw new ClientSourceException(e);
+        }
+    }
 
 }

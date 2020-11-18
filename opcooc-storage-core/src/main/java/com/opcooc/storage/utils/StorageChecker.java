@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.utils;
 
-import com.opcooc.storage.config.ClientSource;
+import com.opcooc.storage.config.ClientType;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.exception.ClientSourceException;
 
@@ -35,7 +35,7 @@ public class StorageChecker {
      */
     public static final Predicate<String> CHECK_BUCKET_NAME = name -> Pattern.matches("^[a-z0-9][a-z0-9\\.\\-]+[a-z0-9]$", name);
 
-    public static void checkS3Config(StorageProperty config, ClientSource source) {
+    public static void checkS3Config(StorageProperty config, ClientType source) {
         if (Objects.isNull(config.getAccessKey()) || Objects.isNull(config.getSecretKey()) ||
                 Objects.isNull(config.getEndPoint()) || Objects.isNull(config.getBucketName())) {
             throw new ClientSourceException("opcooc-storage - init storage client [%s] error: incomplete params", source);

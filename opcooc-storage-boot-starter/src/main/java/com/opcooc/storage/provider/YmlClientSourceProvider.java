@@ -17,7 +17,7 @@
 package com.opcooc.storage.provider;
 
 import com.opcooc.storage.autoconfigure.FileClientProperties;
-import com.opcooc.storage.client.FileClient;
+import com.opcooc.storage.client.Client;
 import com.opcooc.storage.config.StorageProperty;
 import lombok.AllArgsConstructor;
 
@@ -38,9 +38,9 @@ public class YmlClientSourceProvider extends AbstractClientSourceProvider {
     private final Map<String, FileClientProperties.ExtendRequestProperty> extendStoragePropertiesMap;
 
     @Override
-    public Map<String, FileClient> loadClientSources() {
+    public Map<String, Client> loadClientSources() {
         // 用户自定优于内置配置
-        Map<String, FileClient> map = createClientMap(storagePropertiesMap);
+        Map<String, Client> map = createClientMap(storagePropertiesMap);
         map.putAll(createExtendClientMap(extendStoragePropertiesMap));
         return map;
     }

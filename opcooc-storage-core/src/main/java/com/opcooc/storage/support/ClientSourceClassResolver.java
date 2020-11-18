@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.support;
 
-import com.opcooc.storage.annotation.CS;
+import com.opcooc.storage.annotation.OS;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodClassKey;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -151,7 +151,7 @@ public class ClientSourceClassResolver {
      * @return 数据源映射持有者
      */
     private String findString(AnnotatedElement ae) {
-        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, CS.class);
+        AnnotationAttributes attributes = AnnotatedElementUtils.getMergedAnnotationAttributes(ae, OS.class);
         if (attributes != null) {
             return attributes.getString("value");
         }

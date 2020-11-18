@@ -17,8 +17,7 @@
 package com.opcooc.storage.provider;
 
 import com.opcooc.storage.autoconfigure.FileClientProperties;
-import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.config.ClientSource;
+import com.opcooc.storage.client.Client;
 import com.opcooc.storage.config.StorageProperty;
 import com.opcooc.storage.creator.FileClientCreator;
 
@@ -32,12 +31,12 @@ import java.util.Map;
 public abstract class AbstractClientSourceProvider implements ClientSourceProvider {
 
 
-    protected Map<String, FileClient> createClientMap(Map<String, StorageProperty> clientSourceMap) {
+    protected Map<String, Client> createClientMap(Map<String, StorageProperty> clientSourceMap) {
 
-        Map<String, FileClient> map = new HashMap<>(clientSourceMap.size());
+        Map<String, Client> map = new HashMap<>(clientSourceMap.size());
         for (Map.Entry<String, StorageProperty> item : clientSourceMap.entrySet()) {
             String key = item.getKey().toUpperCase();
-            FileClient client = FileClientCreator.getClient(key, item.getValue());
+            Client client = FileClientCreator.getClient(key, item.getValue());
             if (client != null) {
                 map.put(key, client);
             }
@@ -46,13 +45,13 @@ public abstract class AbstractClientSourceProvider implements ClientSourceProvid
         return map;
     }
 
-    protected Map<String, FileClient> createExtendClientMap(
+    protected Map<String, Client> createExtendClientMap(
             Map<String, FileClientProperties.ExtendRequestProperty> clientSourceMap) {
 
-        Map<String, FileClient> map = new HashMap<>(clientSourceMap.size());
+        Map<String, Client> map = new HashMap<>(clientSourceMap.size());
         for (Map.Entry<String, FileClientProperties.ExtendRequestProperty> item : clientSourceMap.entrySet()) {
             String key = item.getKey().toUpperCase();
-            FileClient client = FileClientCreator.getExtendClient(item.getValue());
+            Client client = FileClientCreator.getExtendClient(item.getValue());
             if (client != null) {
                 map.put(key, client);
             }

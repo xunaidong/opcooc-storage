@@ -28,18 +28,12 @@ import java.util.List;
  * @author shenqicheng
  * @since 2020-08-22 10:30
  */
-public interface FileClient {
-
-    //--------------------------------------shutdown start--------------------------------------
+public interface Client {
 
     /**
      * 关闭资源
      */
     void shutdown();
-
-    //--------------------------------------shutdown end--------------------------------------
-
-    //--------------------------------------folder start--------------------------------------
 
     /**
      * 创建文件夹
@@ -47,17 +41,6 @@ public interface FileClient {
      * @param args 参数
      */
     void createFolder(SetFolderArgs args);
-
-    //--------------------------------------folder end--------------------------------------
-
-    //--------------------------------------bucket method start--------------------------------------
-
-    /**
-     * 获取获取当前环境的桶名称
-     *
-     * @return 存储桶名称
-     */
-    String getBucketName();
 
     /**
      * 创建存储桶
@@ -89,10 +72,6 @@ public interface FileClient {
      */
     boolean doesBucketExist(DoesBucketExistArgs args);
 
-    //--------------------------------------bucket method end--------------------------------------
-
-    //--------------------------------------upload file start--------------------------------------
-
     /**
      * 上传文件到服务器
      *
@@ -109,7 +88,6 @@ public interface FileClient {
      */
     FileBasicInfo uploadFile(UploadFileArgs args);
 
-
     /**
      * 上传文件到服务器
      *
@@ -118,20 +96,12 @@ public interface FileClient {
      */
     FileBasicInfo uploadPath(UploadPathArgs args);
 
-    //--------------------------------------upload file end--------------------------------------
-
-    //--------------------------------------copy file start--------------------------------------
-
     /**
      * 复制文件
      *
      * @param args 参数
      */
     void copyObject(CopyObjectArgs args);
-
-    //--------------------------------------copy file end--------------------------------------
-
-    //--------------------------------------get file Metadata start--------------------------------------
 
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
@@ -140,7 +110,6 @@ public interface FileClient {
      * @return 文件信息集合
      */
     List<FileBasicInfo> listObjects(ListObjectsArgs args);
-
 
     /**
      * 获取指定存储桶名称 指定前缀 的下级所有文件
@@ -178,10 +147,6 @@ public interface FileClient {
      */
     boolean objectExist(DoesObjectExistArgs args);
 
-    //--------------------------------------get file Metadata end--------------------------------------
-
-    //--------------------------------------get file object start--------------------------------------
-
     /**
      * 获得文件 InputStream
      *
@@ -214,17 +179,12 @@ public interface FileClient {
      */
     byte[] getObjectToBytes(GetObjectToBytesArgs args);
 
-    //--------------------------------------get file object end--------------------------------------
-
-    //--------------------------------------delete file start--------------------------------------
-
     /**
      * 删除单个文件
      *
      * @param args 参数
      */
     void deleteObject(DeleteObjectArgs args);
-
 
     /**
      * 删除文件集合
@@ -233,10 +193,6 @@ public interface FileClient {
      */
     void deleteObjects(DeleteObjectsArgs args);
 
-    //--------------------------------------delete file end--------------------------------------
-
-    //--------------------------------------get generate presigned url start--------------------------------------
-
     /**
      * 生成签名的URL，以使用get的HTTP方法访问文件
      *
@@ -244,7 +200,5 @@ public interface FileClient {
      * @return 签名url
      */
     String generatePresignedUrl(GetPresignedObjectUrlArgs args);
-
-    //--------------------------------------get generate presigned url start--------------------------------------
 
 }

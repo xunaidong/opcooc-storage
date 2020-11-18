@@ -76,10 +76,10 @@ public class FileClientAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CsProcessor dsProcessor() {
-        CsHeaderProcessor headerProcessor = new CsHeaderProcessor();
-        CsSessionProcessor sessionProcessor = new CsSessionProcessor();
-        CsSpelExpressionProcessor spelExpressionProcessor = new CsSpelExpressionProcessor();
+    public OsProcessor dsProcessor() {
+        OsHeaderProcessor headerProcessor = new OsHeaderProcessor();
+        OsSessionProcessor sessionProcessor = new OsSessionProcessor();
+        OsSpelExpressionProcessor spelExpressionProcessor = new OsSpelExpressionProcessor();
         headerProcessor.setNextProcessor(sessionProcessor);
         sessionProcessor.setNextProcessor(spelExpressionProcessor);
         return headerProcessor;
@@ -89,8 +89,8 @@ public class FileClientAutoConfiguration {
     @Role(value = BeanDefinition.ROLE_INFRASTRUCTURE)
     @Bean
     @ConditionalOnMissingBean
-    public DynamicClientSourceAnnotationAdvisor dynamicStorageAnnotationAdvisor(CsProcessor csProcessor) {
-        DynamicClientSourceAnnotationInterceptor interceptor = new DynamicClientSourceAnnotationInterceptor(properties.isAllowedPublicOnly(), csProcessor);
+    public DynamicClientSourceAnnotationAdvisor dynamicStorageAnnotationAdvisor(OsProcessor osProcessor) {
+        DynamicClientSourceAnnotationInterceptor interceptor = new DynamicClientSourceAnnotationInterceptor(properties.isAllowedPublicOnly(), osProcessor);
         DynamicClientSourceAnnotationAdvisor advisor = new DynamicClientSourceAnnotationAdvisor(interceptor);
         advisor.setOrder(properties.getOrder());
         return advisor;

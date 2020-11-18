@@ -16,8 +16,7 @@
  */
 package com.opcooc.storage.autoconfigure;
 
-import com.opcooc.storage.client.FileClient;
-import com.opcooc.storage.config.ClientSource;
+import com.opcooc.storage.client.Client;
 import com.opcooc.storage.config.StorageProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,7 +73,7 @@ public class FileClientProperties {
         /**
          * client对应全路径
          */
-        private Class<? extends FileClient> client;
+        private Class<? extends Client> client;
     }
 
 }

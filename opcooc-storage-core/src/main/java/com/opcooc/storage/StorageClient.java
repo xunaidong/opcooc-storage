@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage;
 
-import com.opcooc.storage.client.FileClient;
+import com.opcooc.storage.client.Client;
 import com.opcooc.storage.support.DynamicRoutingClientSourceManager;
 import com.opcooc.storage.utils.DynamicStorageClientContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class StorageClient {
         this.storageManager = dynamicRoutingClientSourceManager;
     }
 
-    public FileClient op() {
+    public Client op() {
         return getClient(DynamicStorageClientContextHolder.client());
     }
 

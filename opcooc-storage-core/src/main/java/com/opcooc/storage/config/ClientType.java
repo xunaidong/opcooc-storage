@@ -14,30 +14,23 @@
  * limitations under the License.
  * <pre/>
  */
-package com.opcooc.storage.annotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.opcooc.storage.config;
 
 /**
- * 切换 storage client 的注解
- *
  * @author shenqicheng
- * @since 2020-08-30 10:30
+ * @since 2020-08-22 10:30
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface CS {
+public enum ClientType {
 
     /**
-     * client name
-     *
-     * @return The name of the client to be switch
+     * NONE, S3, OSS, COS, MINIO, QINIU, HDFS
      */
-    String value();
+    S3,
+    OSS,
+    COS,
+    MINIO,
+    QINIU,
+    HDFS;
+
 
 }

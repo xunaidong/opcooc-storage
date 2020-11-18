@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.provider;
 
-import com.opcooc.storage.client.FileClient;
+import com.opcooc.storage.client.Client;
 
 import java.util.Map;
 
@@ -28,5 +28,5 @@ import java.util.Map;
  */
 public interface ClientSourceProvider {
 
-    Map<String, FileClient> loadClientSources();
+    Map<String, Client> loadClientSources();
 }

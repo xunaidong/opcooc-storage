@@ -20,7 +20,7 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.opcooc.storage.autoconfigure.FileClientProperties;
 import com.opcooc.storage.client.*;
-import com.opcooc.storage.config.ClientSource;
+import com.opcooc.storage.config.ClientType;
 import com.opcooc.storage.config.StorageProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,33 +35,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileClientCreator {
 
-    public static FileClient getClient(String source, StorageProperty property) {
-        ClientSource clientSource;
+    public static Client getClient(String source, StorageProperty property) {
+        ClientType clientType;
 
         try {
-            clientSource = EnumUtil.fromString(ClientSource.class, source);
+            clientType = EnumUtil.fromString(ClientType.class, source);
         } catch (IllegalArgumentException e) {
             // 无自定义匹配
             return null;
         }
 
-        switch (clientSource) {
-            case S3:
-                return new S3Client(property);
-            case OSS:
-                return new OSSClient(property);
-            case COS:
-                return new COSClient(property);
-            case MINIO:
-                return new MinIOClient(property);
-            case QINIU:
-                return new QinIuClient(property);
+        switch (clientType) {
+//            case S3:
+//                return new S3Client(property);
+//            case OSS:
+//                return new OSSClientSource(property);
+//            case COS:
+//                return new COSClientSource(property);
+//            case MINIO:
+//                return new MinIOClientSource(property);
+//            case QINIU:
+//                return new QinIuClientSource(property);
             default:
                 return null;
         }
     }
 
-    public static FileClient getExtendClient(FileClientProperties.ExtendRequestProperty property) {
+    public static Client getExtendClient(FileClientProperties.ExtendRequestProperty property) {
         // 反射获取 Request 对象，所以必须实现 1 个参数的构造方法
         try {
             return ReflectUtil.newInstance(property.getClient(), (StorageProperty) property);

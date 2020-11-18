@@ -16,7 +16,7 @@
  */
 package com.opcooc.storage.aop;
 
-import com.opcooc.storage.annotation.CS;
+import com.opcooc.storage.annotation.OS;
 import lombok.NonNull;
 import org.aopalliance.aop.Advice;
 import org.springframework.aop.ClassFilter;
@@ -71,8 +71,8 @@ public class DynamicClientSourceAnnotationAdvisor extends AbstractPointcutAdviso
     }
 
     private Pointcut buildPointcut() {
-        Pointcut cpc = new AnnotationMatchingPointcut(CS.class, true);
-        Pointcut mpc = new AnnotationMethodPoint(CS.class);
+        Pointcut cpc = new AnnotationMatchingPointcut(OS.class, true);
+        Pointcut mpc = new AnnotationMethodPoint(OS.class);
         return new ComposablePointcut(cpc).union(mpc);
     }
 
